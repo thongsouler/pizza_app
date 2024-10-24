@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../blocs/authentication_bloc/authentication_bloc.dart';
@@ -29,7 +30,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
       body: SafeArea(
-        child: SingleChildScrollView(
+        child: Center(
           child: SizedBox(
             height: MediaQuery.of(context).size.height,
             child: Stack(
@@ -70,16 +71,44 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                               .withOpacity(0.5),
                           labelColor:
                               Theme.of(context).colorScheme.onBackground,
-                          tabs: const [
+                          tabs: [
                             Padding(
-                              padding: EdgeInsets.all(12.0),
-                              child: Text(
-                                'Đăng nhập',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                ),
-                              ),
-                            ),
+                                padding: EdgeInsets.all(12.0),
+                                child: AnimatedTextKit(
+                                  animatedTexts: [
+                                    ColorizeAnimatedText(
+                                      'STEM - THCS HẢI XUÂN',
+                                      textStyle: const TextStyle(
+                                        fontSize: 50.0,
+                                        fontFamily: 'Horizon',
+                                        shadows: [
+                                          Shadow(
+                                            offset: Offset(4.0,
+                                                4.0), // Horizontal and vertical shadow offset
+                                            blurRadius: 10.0, // The blur effect
+                                            color:
+                                                Colors.black54, // Shadow color
+                                          ),
+                                          Shadow(
+                                            offset: Offset(-4.0,
+                                                -4.0), // Additional shadow for depth
+                                            blurRadius: 8.0,
+                                            color: Colors.black26,
+                                          ),
+                                        ],
+                                      ),
+                                      colors: [
+                                        Colors.white,
+                                        Colors.red,
+                                        Colors.yellow
+                                      ],
+                                    ),
+                                  ],
+                                  totalRepeatCount: 4,
+                                  pause: const Duration(milliseconds: 500),
+                                  displayFullTextOnTap: true,
+                                  stopPauseOnTap: false,
+                                )),
                             // Padding(
                             //   padding: EdgeInsets.all(12.0),
                             //   child: Text(
@@ -100,7 +129,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                             create: (context) => SignInBloc(context
                                 .read<AuthenticationBloc>()
                                 .userRepository),
-                            child: const SignInScreen(),
+                            child: Center(child: const SignInScreen()),
                           ),
                           // BlocProvider<SignUpBloc>(
                           // 	create: (context) => SignUpBloc(

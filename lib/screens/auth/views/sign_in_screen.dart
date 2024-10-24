@@ -63,7 +63,7 @@ class _SignInScreenState extends State<SignInScreen> {
                   child: MyTextField(
                     controller: passwordController,
                     hintText: 'Số CCCD',
-                    obscureText: obscurePassword,
+                    obscureText: false,
                     keyboardType: TextInputType.visiblePassword,
                     prefixIcon: const Icon(Icons.abc_outlined),
                     errorMsg: _errorMsg,
@@ -86,6 +86,7 @@ class _SignInScreenState extends State<SignInScreen> {
                 !signInRequired
                     ? SizedBox(
                         width: MediaQuery.of(context).size.width * 0.5,
+                        height: 40,
                         child: TextButton(
                             onPressed: () {
                               if (_formKey.currentState!.validate()) {
@@ -100,7 +101,7 @@ class _SignInScreenState extends State<SignInScreen> {
                                     Theme.of(context).colorScheme.primary,
                                 foregroundColor: Colors.white,
                                 shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(60))),
+                                    borderRadius: BorderRadius.circular(10))),
                             child: const Padding(
                               padding: EdgeInsets.symmetric(
                                   horizontal: 25, vertical: 5),
