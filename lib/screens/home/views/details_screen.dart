@@ -1,235 +1,239 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:pizza_app/app_view.dart';
 import 'package:pizza_app/blocs/authentication_bloc/authentication_bloc.dart';
+import 'package:pizza_app/screens/auth/blocs/sing_in_bloc/sign_in_bloc.dart';
+import 'package:pizza_app/screens/auth/views/welcome_screen.dart';
 import 'package:pizza_repository/pizza_repository.dart';
-import '../../../components/macro.dart';
-import '../../auth/blocs/sing_in_bloc/sign_in_bloc.dart';
 
-class DetailsScreen extends StatelessWidget {
+class DetailsScreen extends StatefulWidget {
   final Pizza pizza;
   const DetailsScreen(this.pizza, {super.key});
 
   @override
+  State<DetailsScreen> createState() => _DetailsScreenState();
+}
+
+class _DetailsScreenState extends State<DetailsScreen> {
+  late final SignInBloc manager;
+
+  @override
+  void initState() {
+    manager = context.read<SignInBloc>();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AuthenticationBloc, AuthenticationState>(
-        builder: (context, snapshot) {
-      return BlocProvider<SignInBloc>(
-        create: (context) =>
-            SignInBloc(context.read<AuthenticationBloc>().userRepository),
-        child: Scaffold(
-          backgroundColor: Theme.of(context).colorScheme.background,
-          appBar: AppBar(
-            backgroundColor: Colors.lightGreen,
-            title: Text(pizza.name),
+    return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.background,
+      appBar: AppBar(
+        backgroundColor: Colors.lightGreen,
+        title: Text(widget.pizza.name),
+      ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+          child: Column(
+            children: [
+              _buildPizzaImage(context),
+              const SizedBox(height: 30),
+              _buildDetailsSection(context),
+            ],
           ),
-          body: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
-              child: Column(
-                children: [
-                  Container(
-                    width: MediaQuery.of(context).size.width,
-                    height: MediaQuery.of(context).size.width - 40,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(30),
-                      boxShadow: const [
-                        BoxShadow(
-                            color: Colors.grey,
-                            offset: Offset(3, 3),
-                            blurRadius: 5)
-                      ],
-                      image: DecorationImage(
-                          image: NetworkImage(pizza.picture),
-                          fit: BoxFit.cover),
-                    ),
-                  ),
-                  const SizedBox(height: 30),
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(30),
-                      boxShadow: const [
-                        BoxShadow(
-                            color: Colors.grey,
-                            offset: Offset(3, 3),
-                            blurRadius: 5)
-                      ],
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(20.0),
-                      child: Column(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Expanded(
-                                flex: 1,
-                                child: Text(
-                                  pizza.name,
-                                  style: const TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                              ),
-                              Expanded(
-                                flex: 1,
-                                child: Align(
-                                  alignment: Alignment.centerRight,
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                    children: [
-                                      Text(
-                                        pizza.description,
-                                        style: TextStyle(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.lightGreen,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 12),
-                          SizedBox(
-                            width: MediaQuery.of(context).size.width,
-                            height: 50,
-                            child: TextButton(
-                              onPressed: () {},
-                              style: TextButton.styleFrom(
-                                elevation: 3.0,
-                                backgroundColor: Colors.lightGreen,
-                                foregroundColor: Colors.white,
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10)),
-                              ),
-                              child: const Text(
-                                "In chỉ dẫn",
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.w600),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 12),
-                          // Nút Xem
-                          SizedBox(
-                            width: MediaQuery.of(context).size.width,
-                            height: 50,
-                            child: TextButton(
-                              onPressed: () {
-                                // Hiển thị popup với hình ảnh
-                                showDialog(
-                                  context: context,
-                                  useRootNavigator: true,
-                                  builder: (tcontext) => AlertDialog(
-                                    backgroundColor: Colors.white,
-                                    insetPadding: const EdgeInsets.symmetric(
-                                        horizontal: 10, vertical: 20),
-                                    content: SizedBox(
-                                      height:
-                                          MediaQuery.of(context).size.height *
-                                              0.9,
-                                      child: Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Image.network(
-                                            pizza.picture,
-                                            fit: BoxFit.contain,
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .height *
-                                                0.7, // Chiều cao của ảnh trong popup
-                                            // width: 200,
-                                          ),
-                                          const SizedBox(height: 10),
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceEvenly,
-                                            children: [
-                                              TextButton(
-                                                style: TextButton.styleFrom(
-                                                  elevation: 3.0,
-                                                  backgroundColor:
-                                                      Colors.lightGreen,
+        ),
+      ),
+    );
+  }
 
-                                                  side: BorderSide(
-                                                      color: Colors.lightGreen,
-                                                      width:
-                                                          2), // Viền màu xanh
-                                                ),
-                                                onPressed: () {
-                                                  Navigator.pop(
-                                                      context); // Đóng popup
-                                                },
-                                                child: const Text(
-                                                  "Đóng",
-                                                  style: TextStyle(
-                                                      color: Colors.white),
-                                                ),
-                                              ),
-                                              TextButton(
-                                                style: TextButton.styleFrom(
-                                                  elevation: 3.0,
-                                                  backgroundColor:
-                                                      Colors.lightGreen,
+  Widget _buildPizzaImage(BuildContext context) {
+    return Container(
+      width: MediaQuery.of(context).size.height * 0.6,
+      height: MediaQuery.of(context).size.height * 0.6,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(30),
+        boxShadow: const [
+          BoxShadow(color: Colors.grey, offset: Offset(3, 3), blurRadius: 5),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(30),
+        child: Image.network(
+          widget.pizza.picture,
+          errorBuilder:
+              (BuildContext context, Object exception, StackTrace? stackTrace) {
+            return Image.asset(
+              'assets/haixuan.jpg',
+              fit: BoxFit.fitHeight,
+            );
+          },
+        ),
+      ),
+    );
+  }
 
-                                                  side: BorderSide(
-                                                      color: Colors.lightGreen,
-                                                      width:
-                                                          2), // Viền màu xanh
-                                                ),
-                                                onPressed: () {
-                                                  context
-                                                      .read<SignInBloc>()
-                                                      .add(SignOutRequired());
-                                                },
-                                                child: const Text(
-                                                  "Kết thúc",
-                                                  style: TextStyle(
-                                                      color: Colors.white),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              },
-                              style: TextButton.styleFrom(
-                                elevation: 3.0,
-                                backgroundColor: Colors.lightGreen,
-                                foregroundColor: Colors.white,
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10)),
-                              ),
-                              child: const Text(
-                                "Xem",
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.w600),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
+  Widget _buildDetailsSection(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(30),
+        boxShadow: const [
+          BoxShadow(color: Colors.grey, offset: Offset(3, 3), blurRadius: 5),
+        ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          children: [
+            _buildPizzaInfo(),
+            const SizedBox(height: 12),
+            _buildActionButton(context, "In chỉ dẫn", () {
+              manager.add(SignOutRequired());
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => const WelcomeScreen()),
+                (route) => false, // This will remove all previous routes
+              );
+            }),
+            const SizedBox(height: 12),
+            _buildActionButton(context, "Xem", () {
+              _showPizzaPopup(context);
+            }),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPizzaInfo() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Expanded(
+          flex: 1,
+          child: Text(
+            widget.pizza.name,
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+        ),
+        Expanded(
+          flex: 1,
+          child: Align(
+            alignment: Alignment.centerRight,
+            child: Text(
+              widget.pizza.description,
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.lightGreen,
               ),
             ),
           ),
         ),
-      );
-    });
+      ],
+    );
+  }
+
+  Widget _buildActionButton(
+      BuildContext context, String label, VoidCallback onPressed) {
+    return SizedBox(
+      width: MediaQuery.of(context).size.width,
+      height: 50,
+      child: TextButton(
+        onPressed: onPressed,
+        style: TextButton.styleFrom(
+          elevation: 3.0,
+          backgroundColor: Colors.lightGreen,
+          foregroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+        child: Text(
+          label,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showPizzaPopup(BuildContext context) {
+    showDialog(
+      context: context,
+      useRootNavigator: true,
+      builder: (context) => SizedBox(
+        height: MediaQuery.of(context).size.height,
+        width: MediaQuery.of(context).size.height,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: MediaQuery.of(context).size.height * 0.8,
+              height: MediaQuery.of(context).size.height * 0.8,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(30),
+                boxShadow: const [
+                  BoxShadow(
+                      color: Colors.grey, offset: Offset(3, 3), blurRadius: 5),
+                ],
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(30),
+                child: Image.network(
+                  widget.pizza.picture,
+                  errorBuilder: (BuildContext context, Object exception,
+                      StackTrace? stackTrace) {
+                    return Image.asset(
+                      'assets/haixuan.jpg',
+                      fit: BoxFit.fitHeight,
+                    );
+                  },
+                ),
+              ),
+            ),
+            const SizedBox(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _buildPopupButton(context, "Đóng", Colors.lightGreen, () {
+                  Navigator.pop(context);
+                }),
+                _buildPopupButton(context, "Kết thúc", Colors.red, () {
+                  manager.add(SignOutRequired());
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const WelcomeScreen()),
+                    (route) => false, // This will remove all previous routes
+                  );
+                }),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPopupButton(
+      BuildContext context, String label, Color color, VoidCallback onPressed) {
+    return TextButton(
+      style: TextButton.styleFrom(
+        elevation: 3.0,
+        backgroundColor: color,
+        minimumSize: const Size(100, 60),
+        side: BorderSide(color: color, width: 2),
+      ),
+      onPressed: onPressed,
+      child: Text(
+        label,
+        style: const TextStyle(color: Colors.white),
+      ),
+    );
   }
 }

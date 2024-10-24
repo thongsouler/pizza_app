@@ -72,4 +72,15 @@ class FirebaseUserRepo implements UserRepository {
       rethrow;
     }
   }
+
+  Future<void> setPlace(String userId, String place) async {
+    try {
+      await usersCollection.doc(userId).update({
+        'place': place, // Update the place field
+      });
+    } catch (e) {
+      log(e.toString());
+      rethrow;
+    }
+  }
 }

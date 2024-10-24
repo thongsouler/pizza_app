@@ -40,8 +40,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                     height: MediaQuery.of(context).size.width,
                     width: MediaQuery.of(context).size.width,
                     decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Theme.of(context).colorScheme.tertiary),
+                        shape: BoxShape.circle, color: Colors.green),
                   ),
                 ),
                 Align(
@@ -50,8 +49,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                     height: MediaQuery.of(context).size.width / 1.3,
                     width: MediaQuery.of(context).size.width / 1.3,
                     decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Theme.of(context).colorScheme.primary),
+                        shape: BoxShape.circle, color: Colors.yellow),
                   ),
                 ),
                 BackdropFilter(
@@ -70,7 +68,8 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                               .colorScheme
                               .onBackground
                               .withOpacity(0.5),
-                          labelColor: Theme.of(context).colorScheme.onBackground,
+                          labelColor:
+                              Theme.of(context).colorScheme.onBackground,
                           tabs: const [
                             Padding(
                               padding: EdgeInsets.all(12.0),
