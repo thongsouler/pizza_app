@@ -22,26 +22,18 @@ class MyAppView extends StatelessWidget {
                 onBackground: Colors.black,
                 primary: Colors.blue,
                 onPrimary: Colors.white)),
-        home: BlocBuilder<AuthenticationBloc, AuthenticationState>(
-          builder: ((context, state) {
-            if (state.status == AuthenticationStatus.authenticated) {
-              return MultiBlocProvider(
-                providers: [
-                  BlocProvider(
-                    create: (context) => SignInBloc(
-                        context.read<AuthenticationBloc>().userRepository),
-                  ),
-                  BlocProvider(
-                    create: (context) =>
-                        GetPizzaBloc(FirebasePizzaRepo())..add(GetPizza()),
-                  ),
-                ],
-                child: const HomeScreen(),
-              );
-            } else {
-              return const WelcomeScreen();
-            }
-          }),
+        home: MultiBlocProvider(
+          providers: [
+            BlocProvider(
+              create: (context) =>
+                  SignInBloc(context.read<AuthenticationBloc>().userRepository),
+            ),
+            BlocProvider(
+              create: (context) =>
+                  GetPizzaBloc(FirebasePizzaRepo())..add(GetPizza()),
+            ),
+          ],
+          child: const WelcomeScreen(),
         ));
   }
 }

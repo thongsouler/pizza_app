@@ -2,18 +2,24 @@ import '../entities/entities.dart';
 import 'models.dart';
 
 class Pizza {
-  String id;
-  String picture;
-  String name;
-  String description;
-  String location;
+  String? id;
+  String? picture;
+  String? name;
+  String? location;
+  String? floor;
+  String? room;
+  String? row; //Dãy nhà
+  String? unit;
 
   Pizza({
-    required this.id,
-    required this.picture,
-    required this.name,
-    required this.description,
-    required this.location,
+    this.id,
+    this.picture,
+    this.name,
+    this.location,
+    this.floor,
+    this.room,
+    this.row,
+    this.unit,
   });
 
   PizzaEntity toEntity() {
@@ -21,8 +27,11 @@ class Pizza {
       id: id,
       picture: picture,
       name: name,
-      description: description,
       location: location,
+      floor: floor,
+      room: room,
+      row: row,
+      unit: unit,
     );
   }
 
@@ -31,8 +40,11 @@ class Pizza {
       id: entity.id,
       picture: entity.picture,
       name: entity.name,
-      description: entity.description,
-      location: entity.location
+      location: entity.location,
+      floor: entity.floor,
+      room: entity.room,
+      row: entity.row,
+      unit: entity.unit,
     );
   }
 }

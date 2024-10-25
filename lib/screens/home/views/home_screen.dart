@@ -2,12 +2,17 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pizza_app/blocs/authentication_bloc/authentication_bloc.dart';
+import 'package:pizza_app/components/custom_appbar.dart';
 import 'package:pizza_app/screens/auth/blocs/sing_in_bloc/sign_in_bloc.dart';
 import 'package:pizza_app/screens/home/blocs/get_pizza_bloc/get_pizza_bloc.dart';
+import 'package:pizza_app/screens/home/qr_code_model.dart';
 import 'package:pizza_app/screens/home/views/details_screen.dart';
+import 'package:pizza_app/screens/home/views/list_place_screen.dart';
+import 'package:pizza_repository/pizza_repository.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  final UserData? userData;
+  const HomeScreen({Key? key, this.userData}) : super(key: key);
 
   @override
   _HomeScreenState createState() => _HomeScreenState();
@@ -42,112 +47,113 @@ class _HomeScreenState extends State<HomeScreen>
       ],
       child: Scaffold(
         backgroundColor: Theme.of(context).colorScheme.background,
-        appBar: AppBar(
-          backgroundColor: Colors.lightGreen,
-          title: const Row(
-            children: [
-              Icon(Icons.school),
-              SizedBox(width: 8),
-              Text(
-                'THCS HẢI XUÂN',
-                style: TextStyle(fontWeight: FontWeight.w900, fontSize: 24),
-              ),
-            ],
-          ),
-          actions: [
-            IconButton(
-              onPressed: () {
-                manager.add(SignOutRequired());
-              },
-              icon: const Icon(CupertinoIcons.arrow_right_to_line),
-            ),
-          ],
+        appBar: CustomAppBar(
+          manager: manager,
+          isPushLoginScreen: false,
         ),
         body: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
-              // Ô tìm kiếm
-              TextField(
-                onChanged: (value) {
-                  setState(() {
-                    searchQuery = value; // Cập nhật truy vấn tìm kiếm
-                  });
-                },
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: const BorderSide(color: Colors.lightGreen),
-                  ),
-                  prefixIcon: const Icon(Icons.search),
-                  hintText: 'Tìm kiếm lớp học/phòng làm việc...',
-                  filled: true,
-                  fillColor: Colors.white,
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    const SizedBox(height: 50),
+                    const Text(
+                      'CHÀO MỪNG QUÝ KHÁCH TỚI VỚI TRƯỜNG THCS HẢI XUÂN',
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 20),
+                    Text(
+                      'CHÀO ${widget.userData?.name},',
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 40),
+                    const Text(
+                      'VUI LÒNG LỰA CHỌN ĐỊA ĐIỂM MUỐN ĐẾN:',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    // Add other widgets below if needed
+                  ],
                 ),
               ),
               const SizedBox(height: 16.0),
-
-              // TabBar
-              Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  // border: Border.all(color: Colors.green, width: 1),
-                ),
-                child: TabBar(
-                  controller: _tabController,
-                  indicator: BoxDecoration(
-                    color: Colors.green, // Màu nền của indicator
-                    borderRadius:
-                        BorderRadius.circular(6), // Bo góc cho indicator
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  _buildOptionContainer(
+                    context,
+                    title: 'Khu vực học tập\ncủa học sinh'.toUpperCase(),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute<void>(
+                          builder: (BuildContext context) {
+                            return MultiBlocProvider(
+                              providers: [
+                                BlocProvider.value(
+                                  value: manager,
+                                ),
+                                BlocProvider(
+                                  create: (context) =>
+                                      GetPizzaBloc(FirebasePizzaRepo())
+                                        ..add(GetPizza()),
+                                ),
+                              ],
+                              child: const ListPlaceScreen(
+                                placeType: 'class',
+                              ),
+                            );
+                          },
+                        ),
+                      );
+                    },
                   ),
-                  physics: const NeverScrollableScrollPhysics(),
-                  onTap: (index) {
-                    setState(() {});
-                  },
-                  tabs: [
-                    Tab(
-                      child: Container(
-                        child: Center(
-                          child: Text(
-                            "Lớp học",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: _tabController.index == 0
-                                  ? Colors.white
-                                  : Colors.black, // Đổi màu chữ
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Tab(
-                      child: Container(
-                        child: Center(
-                          child: Text(
-                            "Nơi làm việc",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: _tabController.index == 1
-                                  ? Colors.white
-                                  : Colors.black, // Đổi màu chữ
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
 
-              // Danh sách pizza theo tab đã chọn
-              Expanded(
-                child: TabBarView(
-                  controller: _tabController,
-                  children: [
-                    _buildPizzaList(context, "class"),
-                    _buildPizzaList(context, "work"),
-                  ],
-                ),
+                  // Work option
+                  _buildOptionContainer(
+                    context,
+                    title: 'Khu vực làm việc\ncủa nhà trường'.toUpperCase(),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute<void>(
+                          builder: (BuildContext context) {
+                            return MultiBlocProvider(
+                              providers: [
+                                BlocProvider.value(
+                                  value: manager,
+                                ),
+                                BlocProvider(
+                                  create: (context) =>
+                                      GetPizzaBloc(FirebasePizzaRepo())
+                                        ..add(GetPizza()),
+                                ),
+                              ],
+                              child: const ListPlaceScreen(
+                                placeType: 'work',
+                              ),
+                            );
+                          },
+                        ),
+                      );
+                    },
+                  ),
+                ],
               ),
             ],
           ),
@@ -156,103 +162,35 @@ class _HomeScreenState extends State<HomeScreen>
     );
   }
 
-  Widget _buildPizzaList(BuildContext context, String location) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 16),
-      child: BlocBuilder<GetPizzaBloc, GetPizzaState>(
-        builder: (context, state) {
-          if (state is GetPizzaSuccess) {
-            final filteredPizzas = state.pizzas
-                .where((pizza) =>
-                    pizza.location == location &&
-                    pizza.name
-                        .toLowerCase()
-                        .contains(searchQuery.toLowerCase()))
-                .toList();
-
-            return GridView.builder(
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount:
-                    MediaQuery.of(context).orientation == Orientation.landscape
-                        ? 4
-                        : 2,
-                crossAxisSpacing: 16,
-                mainAxisSpacing: 16,
-                childAspectRatio: 3 / 1,
-              ),
-              itemCount: filteredPizzas.length,
-              itemBuilder: (context, int i) {
-                return Container(
-                  // height: 300,
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.green),
-                    borderRadius: BorderRadius.circular(10),
-                    color: Colors.white,
-                  ),
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(10),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute<void>(
-                          builder: (BuildContext context) {
-                            return MultiBlocProvider(
-                              providers: [
-                                // Passing the existing SignInBloc from the parent context
-                                BlocProvider.value(
-                                  value: manager,
-                                ),
-                                // You can pass other blocs or providers similarly, if needed
-                              ],
-                              child: DetailsScreen(filteredPizzas[i]),
-                            );
-                          },
-                        ),
-                      );
-                    },
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        // Image.network(
-                        //   filteredPizzas[i].picture,
-                        //   fit: BoxFit.cover,
-                        //   height: 150,
-                        //   width: double.infinity,
-                        // ),
-                        // const SizedBox(height: 8.0),
-                        Text(
-                          filteredPizzas[i].name,
-                          style: const TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold),
-                          textAlign: TextAlign.center,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                          child: Text(
-                            filteredPizzas[i].description,
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.grey.shade500,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            );
-          } else if (state is GetPizzaLoading) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          } else {
-            return const Center(
-              child: Text("An error has occurred..."),
-            );
-          }
-        },
+  Widget _buildOptionContainer(BuildContext context,
+      {required String title, required VoidCallback onTap}) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 30),
+        decoration: BoxDecoration(
+          color: Colors.lightGreen,
+          borderRadius: BorderRadius.circular(10),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.2),
+              spreadRadius: 2,
+              blurRadius: 8,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Center(
+          child: Text(
+            title,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
       ),
     );
   }

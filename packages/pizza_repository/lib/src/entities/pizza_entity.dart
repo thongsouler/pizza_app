@@ -3,18 +3,24 @@ import 'package:pizza_repository/src/entities/macros_entity.dart';
 import '../models/models.dart';
 
 class PizzaEntity {
-  String id;
-  String picture;
-  String name;
-  String description;
-  String location; // Thêm trường mới
+  String? id;
+  String? picture;
+  String? name;
+  String? location;
+  String? floor;
+  String? room;
+  String? row; //Dãy nhà
+  String? unit;
 
   PizzaEntity({
-    required this.id,
-    required this.picture,
-    required this.name,
-    required this.description,
-    required this.location, // Thêm trường mới vào constructor
+    this.id,
+    this.picture,
+    this.name,
+    this.location,
+    this.floor,
+    this.room,
+    this.row,
+    this.unit,
   });
 
   Map<String, Object?> toDocument() {
@@ -22,8 +28,11 @@ class PizzaEntity {
       'id': id,
       'picture': picture,
       'name': name,
-      'description': description,
-      'location': location, // Thêm trường mới vào document
+      'location': location,
+      'floor': floor,
+      'room': room,
+      'row': row,
+      'unit': unit,
     };
   }
 
@@ -32,8 +41,11 @@ class PizzaEntity {
       id: doc['id'],
       picture: doc['picture'],
       name: doc['name'],
-      description: doc['description'],
-      location: doc['location'], // Thêm trường mới vào quá trình khôi phục từ document
+      location: doc['location'],
+      floor: doc['floor'],
+      room: doc['room'],
+      row: doc['row'],
+      unit: doc['unit']
     );
   }
 }

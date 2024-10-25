@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pizza_app/blocs/authentication_bloc/authentication_bloc.dart';
+import 'package:pizza_app/components/custom_appbar.dart';
 import 'package:pizza_app/screens/auth/blocs/sing_in_bloc/sign_in_bloc.dart';
 import 'package:pizza_app/screens/auth/views/welcome_screen.dart';
 import 'package:pizza_repository/pizza_repository.dart';
@@ -26,10 +27,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
-      appBar: AppBar(
-        backgroundColor: Colors.lightGreen,
-        title: Text(widget.pizza.name),
-      ),
+      appBar: CustomAppBar(manager: manager),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
@@ -59,7 +57,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
       child: ClipRRect(
         borderRadius: BorderRadius.circular(30),
         child: Image.network(
-          widget.pizza.picture,
+          widget.pizza.picture ?? '',
           errorBuilder:
               (BuildContext context, Object exception, StackTrace? stackTrace) {
             return Image.asset(
@@ -112,7 +110,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
         Expanded(
           flex: 1,
           child: Text(
-            widget.pizza.name,
+            widget.pizza.name ?? '',
             style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
         ),
@@ -121,7 +119,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
           child: Align(
             alignment: Alignment.centerRight,
             child: Text(
-              widget.pizza.description,
+              widget.pizza.room ?? '',
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
@@ -185,7 +183,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(30),
                 child: Image.network(
-                  widget.pizza.picture,
+                  widget.pizza.picture ?? '',
                   errorBuilder: (BuildContext context, Object exception,
                       StackTrace? stackTrace) {
                     return Image.asset(
@@ -204,7 +202,6 @@ class _DetailsScreenState extends State<DetailsScreen> {
                   Navigator.pop(context);
                 }),
                 _buildPopupButton(context, "Kết thúc", Colors.red, () {
-                  manager.add(SignOutRequired());
                   Navigator.pushAndRemoveUntil(
                     context,
                     MaterialPageRoute(

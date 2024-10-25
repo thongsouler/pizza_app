@@ -3,8 +3,6 @@ import 'package:firebase_core/firebase_core.dart' show FirebaseOptions;
 
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
-    // Tùy vào nền tảng (Android, iOS, web) mà sẽ trả về cấu hình tương ứng
-
     return android;
   }
 

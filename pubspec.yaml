@@ -21,6 +21,8 @@ dependencies:
   intl: 
   tab_container: ^3.5.3
   animated_text_kit:
+  diacritic:
+  qr_code_scanner:
 
   user_repository:
     path: packages/user_repository
