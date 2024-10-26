@@ -143,6 +143,14 @@ class _ListPlaceScreenState extends State<ListPlaceScreen> {
                     border: Border.all(color: Colors.green),
                     borderRadius: BorderRadius.circular(10),
                     color: Colors.white,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.2),
+                        spreadRadius: 2,
+                        blurRadius: 8,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
                   ),
                   child: InkWell(
                     borderRadius: BorderRadius.circular(10),
@@ -171,17 +179,6 @@ class _ListPlaceScreenState extends State<ListPlaceScreen> {
                           style: const TextStyle(
                               fontSize: 20, fontWeight: FontWeight.bold),
                           textAlign: TextAlign.center,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                          child: Text(
-                            filteredPizzas[i].room ?? '',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.grey.shade500,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
                         ),
                       ],
                     ),

@@ -14,3 +14,9 @@ class SignInFailure extends SignInState {}
 class SignInProcess extends SignInState {}
 
 class SignInSuccess extends SignInState {}
+
+class SignInPlaceUpdateSuccess extends SignInState {}
+
+class SignInPlaceUpdateFailure extends SignInState {}
+
+class LoadPlacesRequested extends SignInEvent {}

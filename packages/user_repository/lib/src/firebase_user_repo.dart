@@ -2,8 +2,10 @@ import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
+
 import 'package:rxdart/rxdart.dart';
 import 'package:user_repository/user_repository.dart';
+import 'package:pizza_app/globals.dart' as globals;
 
 class FirebaseUserRepo implements UserRepository {
   final FirebaseAuth _firebaseAuth;
@@ -20,22 +22,27 @@ class FirebaseUserRepo implements UserRepository {
         yield MyUser.empty;
       } else {
         yield MyUser(
-            userId: firebaseUser.uid,
-            email: firebaseUser.email ?? '',
-            name: firebaseUser.displayName ?? 'Anonymous',
-            hasActiveCart: false);
+          userId: firebaseUser.uid,
+          idcode: firebaseUser.email ?? '',
+          name: firebaseUser.displayName ?? 'Anonymous',
+        );
       }
     });
   }
 
   @override
-  Future<void> signIn(String email, String password) async {
+  Future<void> signIn(MyUser userData) async {
     try {
       await _firebaseAuth.signInAnonymously();
       String userId = DateFormat('ddMMMyyyy_HH:mm').format(DateTime.now());
-
-      await setUserData(MyUser(
-          userId: userId, email: email, name: password, hasActiveCart: false));
+      var user = MyUser(
+        userId: userId,
+        name: userData.name,
+        idcode: userData.idcode,
+        address: userData.address,
+      );
+      await setUserData(user);
+      globals.currentUser = user;
     } catch (e) {
       log(e.toString());
       rethrow;
@@ -45,10 +52,10 @@ class FirebaseUserRepo implements UserRepository {
   @override
   Future<MyUser> signUp(MyUser myUser, String password) async {
     try {
-      UserCredential user = await _firebaseAuth.createUserWithEmailAndPassword(
-          email: myUser.email, password: password);
+      // UserCredential user = await _firebaseAuth.createUserWithEmailAndPassword(
+      //     email: myUser.email, password: password);
 
-      myUser.userId = user.user!.uid;
+      // myUser.userId = user.user!.uid;
       return myUser;
     } catch (e) {
       log(e.toString());
@@ -76,7 +83,7 @@ class FirebaseUserRepo implements UserRepository {
   Future<void> setPlace(String userId, String place) async {
     try {
       await usersCollection.doc(userId).update({
-        'place': place, // Update the place field
+        'toPlace': place,
       });
     } catch (e) {
       log(e.toString());

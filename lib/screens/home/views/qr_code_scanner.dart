@@ -1,12 +1,14 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pizza_app/blocs/authentication_bloc/authentication_bloc.dart';
 import 'package:pizza_app/screens/auth/blocs/sing_in_bloc/sign_in_bloc.dart';
 import 'package:pizza_app/screens/home/blocs/get_pizza_bloc/get_pizza_bloc.dart';
-import 'package:pizza_app/screens/home/qr_code_model.dart';
+
 import 'package:pizza_app/screens/home/views/home_screen.dart';
 import 'package:pizza_repository/pizza_repository.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
+import 'package:user_repository/user_repository.dart';
 
 class QrScanScreen extends StatefulWidget {
   @override
@@ -86,21 +88,24 @@ class _QrScanScreenState extends State<QrScanScreen>
     setState(() {
       qrCodeResult = data;
     });
-
-    context.read<SignInBloc>().add(const SignInRequired("123", "123"));
+    var rs = parseUserData(qrCodeResult);
+    context.read<SignInBloc>().add(SignInRequired(rs));
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute<void>(
         builder: (BuildContext context) {
           return MultiBlocProvider(
             providers: [
-              BlocProvider.value(value: manager),
+              BlocProvider(
+                create: (context) => SignInBloc(
+                    context.read<AuthenticationBloc>().userRepository),
+              ),
               BlocProvider(
                 create: (context) =>
                     GetPizzaBloc(FirebasePizzaRepo())..add(GetPizza()),
               ),
             ],
-            child: HomeScreen(userData: parseUserData(qrCodeResult)),
+            child: HomeScreen(userData: rs),
           );
         },
       ),
@@ -108,7 +113,7 @@ class _QrScanScreenState extends State<QrScanScreen>
     );
   }
 
-  UserData parseUserData(String data) {
+  MyUser parseUserData(String data) {
     try {
       List<String> parts = data.split('|');
       if (parts.length < 6) throw FormatException("Dữ liệu không đủ thông tin");
@@ -117,14 +122,14 @@ class _QrScanScreenState extends State<QrScanScreen>
       String name = parts[2];
       String address = parts[5];
 
-      return UserData(
-        idCode: idCode,
+      return MyUser(
+        idcode: idCode,
         name: name,
         address: address,
       );
     } catch (e) {
       showErrorSnackbar("Error parsing QR data: ${e.toString()}");
-      return UserData(idCode: 'N/A', name: 'Unknown', address: 'Unknown');
+      return MyUser(idcode: 'N/A', name: 'Unknown', address: 'Unknown');
     }
   }
 

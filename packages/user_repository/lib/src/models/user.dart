@@ -1,45 +1,50 @@
 import '../entities/entities.dart';
 
 class MyUser {
-  String userId;
-  String email;
-  String name;
-  bool hasActiveCart;
+  String? userId;
+  String? name;
+  String? toPlace; // New field
+  String? idcode;   // New field
+  String? address; // New field
 
   MyUser({
-    required this.userId,
-    required this.email,
-    required this.name,
-    required this.hasActiveCart,
+     this.userId,
+     this.name,
+     this.toPlace,
+     this.idcode,
+     this.address,
   });
 
   static final empty = MyUser(
-		userId: '', 
-		email: '', 
-		name: '',
-    hasActiveCart: false,
-	);
+    userId: '', 
+    name: '',
+    toPlace: '', // Initialize new field
+    idcode: '',   // Initialize new field
+    address: '', // Initialize new field
+  );
 
   MyUserEntity toEntity() {
     return MyUserEntity(
       userId: userId, 
-      email: email, 
-      name: name,
-      hasActiveCart: hasActiveCart,
+      name: name, 
+      toPlace: toPlace, // New field
+      idcode: idcode,     // New field
+      address: address,  // New field
     );
   }
 
   static MyUser fromEntity(MyUserEntity entity) {
     return MyUser(
       userId: entity.userId, 
-      email: entity.email, 
       name: entity.name, 
-      hasActiveCart: entity.hasActiveCart
+      toPlace: entity.toPlace, // New field
+      idcode: entity.idcode,     // New field
+      address: entity.address,  // New field
     );
   }
 
   @override
   String toString() {
-    return 'MyUser: $userId, $email, $name, $hasActiveCart';
+    return 'MyUser: $userId, $name, $toPlace, $idcode, $address';
   }
 }

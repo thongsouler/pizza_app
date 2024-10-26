@@ -23,6 +23,13 @@ dependencies:
   animated_text_kit:
   diacritic:
   qr_code_scanner:
+  cloud_firestore: ^4.9.2
+  path_provider:
+  share_plus: 
+  flutter_expandable_table:
+  firebase_storage: ^11.6.0
+  image_picker: 
+  uuid:
 
   user_repository:
     path: packages/user_repository

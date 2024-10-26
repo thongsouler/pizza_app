@@ -35,6 +35,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       actions: [
         IconButton(
           onPressed: () {
+            context.read<SignInBloc>().add(SignOutRequired());
             Future.delayed(const Duration(milliseconds: 100), () {
               Navigator.pushAndRemoveUntil(
                 context,

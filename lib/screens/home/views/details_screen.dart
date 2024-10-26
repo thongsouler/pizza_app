@@ -5,6 +5,7 @@ import 'package:pizza_app/components/custom_appbar.dart';
 import 'package:pizza_app/screens/auth/blocs/sing_in_bloc/sign_in_bloc.dart';
 import 'package:pizza_app/screens/auth/views/welcome_screen.dart';
 import 'package:pizza_repository/pizza_repository.dart';
+import 'package:pizza_app/globals.dart' as globals;
 
 class DetailsScreen extends StatefulWidget {
   final Pizza pizza;
@@ -83,18 +84,20 @@ class _DetailsScreenState extends State<DetailsScreen> {
         padding: const EdgeInsets.all(20.0),
         child: Column(
           children: [
-            _buildPizzaInfo(),
-            const SizedBox(height: 12),
+            _buildBuildingInfo(),
+            const SizedBox(height: 20),
             _buildActionButton(context, "In chỉ dẫn", () {
               manager.add(SignOutRequired());
               Navigator.pushAndRemoveUntil(
                 context,
                 MaterialPageRoute(builder: (context) => const WelcomeScreen()),
-                (route) => false, // This will remove all previous routes
+                (route) => false,
               );
             }),
             const SizedBox(height: 12),
             _buildActionButton(context, "Xem", () {
+              manager.add(UpdatePlaceRequested(
+                  globals.currentUser!, widget.pizza.name ?? ""));
               _showPizzaPopup(context);
             }),
           ],
@@ -103,28 +106,52 @@ class _DetailsScreenState extends State<DetailsScreen> {
     );
   }
 
-  Widget _buildPizzaInfo() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  Widget _buildBuildingInfo() {
+    return Column(
       children: [
-        Expanded(
-          flex: 1,
-          child: Text(
-            widget.pizza.name ?? '',
-            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        Text(
+          widget.pizza.name ?? '',
+          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        ),
+        SizedBox(
+          height: 20,
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            _buildInfoColumn("Dãy Nhà", widget.pizza.row ?? ''),
+            _buildInfoColumn("Tầng", widget.pizza.floor ?? ''),
+            _buildInfoColumn("Phòng", widget.pizza.room ?? ''),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildInfoColumn(String label, String value) {
+    return Column(
+      children: [
+        Text(
+          label,
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
           ),
         ),
-        Expanded(
-          flex: 1,
-          child: Align(
-            alignment: Alignment.centerRight,
-            child: Text(
-              widget.pizza.room ?? '',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Colors.lightGreen,
-              ),
+        const SizedBox(height: 8),
+        Container(
+          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
+          decoration: BoxDecoration(
+            color: Colors.blueGrey,
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Text(
+            value,
+            style: const TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
             ),
           ),
         ),
