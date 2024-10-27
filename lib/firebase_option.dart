@@ -11,5 +11,6 @@ class DefaultFirebaseOptions {
     appId: '1:46689285122:android:1974a3d79b24cf0649631b',
     messagingSenderId: '46689285122',
     projectId: 'thcshaixuan-81559',
+    storageBucket: 'thcshaixuan-81559.appspot.com',
   );
 }

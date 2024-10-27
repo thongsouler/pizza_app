@@ -24,8 +24,10 @@ class _PlacesScreenState extends State<PlacesScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Danh sách người dùng'),
+        title: const Text('Danh sách người dùng',  style: TextStyle(
+                fontWeight: FontWeight.w900, fontSize: 24, color: Colors.white),),
         backgroundColor: Colors.lightGreen,
+        iconTheme: IconThemeData(color: Colors.white),
       ),
       body: Column(
         children: [

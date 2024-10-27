@@ -16,6 +16,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return AppBar(
       backgroundColor: Colors.lightGreen,
+      iconTheme: IconThemeData(color: Colors.white),
       title: const Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
@@ -27,7 +28,8 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           Spacer(),
           Text(
             'THCS HẢI XUÂN',
-            style: TextStyle(fontWeight: FontWeight.w900, fontSize: 24),
+            style: TextStyle(
+                fontWeight: FontWeight.w900, fontSize: 24, color: Colors.white),
           ),
           Spacer(),
         ],

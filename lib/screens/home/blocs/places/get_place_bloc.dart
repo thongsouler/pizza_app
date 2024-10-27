@@ -2,8 +2,8 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:pizza_repository/pizza_repository.dart';
 
-part 'get_pizza_event.dart';
-part 'get_pizza_state.dart';
+part 'get_place_event.dart';
+part 'get_place_state.dart';
 
 class GetPizzaBloc extends Bloc<GetPizzaEvent, GetPizzaState> {
   final PizzaRepo _pizzaRepo;

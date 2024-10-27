@@ -61,6 +61,35 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                   alignment: Alignment.center,
                   child: Column(
                     children: [
+                      const SizedBox(height: 30),
+                      Align(
+                        alignment: Alignment.bottomCenter,
+                        child: Container(
+                          width: MediaQuery.of(context).size.width *
+                              0.9, // Smaller width
+                          height: MediaQuery.of(context).size.width *
+                              0.2, // Smaller height
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius:
+                                BorderRadius.circular(20), // Circular shape
+                            boxShadow: const [
+                              BoxShadow(
+                                color: Colors.grey,
+                                offset: Offset(3, 3),
+                                blurRadius: 5,
+                              ),
+                            ],
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(20),
+                            child: Image.asset(
+                              'assets/haixuan.jpg',
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                      ),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 50.0),
                         child: TabBar(
@@ -78,8 +107,9 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                                   animatedTexts: [
                                     ColorizeAnimatedText(
                                       'STEM - THCS HẢI XUÂN',
+                                      textAlign: TextAlign.center,
                                       textStyle: const TextStyle(
-                                        fontSize: 50.0,
+                                        fontSize: 36.0,
                                         fontFamily: 'Horizon',
                                         shadows: [
                                           Shadow(

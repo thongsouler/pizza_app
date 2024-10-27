@@ -85,7 +85,13 @@ class _DetailsScreenState extends State<DetailsScreen> {
         child: Column(
           children: [
             _buildBuildingInfo(),
-            const SizedBox(height: 20),
+            const SizedBox(height: 10),
+            _buildActionButton(context, "Xem", () {
+              manager.add(UpdatePlaceRequested(
+                  globals.currentUser!, widget.pizza.name ?? ""));
+              _showImage(context);
+            }),
+            const SizedBox(height: 10),
             _buildActionButton(context, "In chỉ dẫn", () {
               manager.add(SignOutRequired());
               Navigator.pushAndRemoveUntil(
@@ -93,12 +99,6 @@ class _DetailsScreenState extends State<DetailsScreen> {
                 MaterialPageRoute(builder: (context) => const WelcomeScreen()),
                 (route) => false,
               );
-            }),
-            const SizedBox(height: 12),
-            _buildActionButton(context, "Xem", () {
-              manager.add(UpdatePlaceRequested(
-                  globals.currentUser!, widget.pizza.name ?? ""));
-              _showPizzaPopup(context);
             }),
           ],
         ),
@@ -186,7 +186,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
     );
   }
 
-  void _showPizzaPopup(BuildContext context) {
+  void _showImage(BuildContext context) {
     showDialog(
       context: context,
       useRootNavigator: true,

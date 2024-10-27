@@ -25,7 +25,9 @@ class _PlacesManagementScreenState extends State<PlacesManagementScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.lightGreen,
-        title: const Text('Quản lý địa điểm'),
+        iconTheme: IconThemeData(color: Colors.white),
+        title: const Text('Quản lý địa điểm',  style: TextStyle(
+                fontWeight: FontWeight.w900, fontSize: 24, color: Colors.white),),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
@@ -46,8 +48,12 @@ class _PlacesManagementScreenState extends State<PlacesManagementScreen> {
                   items: _placeTypes.map((type) {
                     return DropdownMenuItem(
                       value: type,
-                      child: Text(
-                          type == 'class' ? 'Khu vực lớp học' : 'Khu làm việc'),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(type == 'class'
+                            ? 'Khu vực lớp học'
+                            : 'Khu làm việc'),
+                      ),
                     );
                   }).toList(),
                   onChanged: (value) {

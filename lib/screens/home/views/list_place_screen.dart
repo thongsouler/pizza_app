@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pizza_app/components/custom_appbar.dart';
 import 'package:pizza_app/screens/auth/blocs/sing_in_bloc/sign_in_bloc.dart';
-import 'package:pizza_app/screens/home/blocs/get_pizza_bloc/get_pizza_bloc.dart';
+import 'package:pizza_app/screens/home/blocs/places/get_place_bloc.dart';
 import 'package:pizza_app/screens/home/views/details_screen.dart';
 
 class ListPlaceScreen extends StatefulWidget {
@@ -84,32 +84,35 @@ class _ListPlaceScreenState extends State<ListPlaceScreen> {
   }
 
   Widget _buildUnitSelection() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: units.map((unit) {
-        return GestureDetector(
-          onTap: () {
-            setState(() {
-              selectedUnit = unit == 'Tất cả' ? null : unit;
-            });
-          },
-          child: Container(
-            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-            decoration: BoxDecoration(
-              color: selectedUnit == unit ? Colors.green : Colors.white,
-              border: Border.all(color: Colors.green),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Text(
-              unit == "Tất cả" ? "Tất cả" : "Khối $unit",
-              style: TextStyle(
-                color: selectedUnit == unit ? Colors.white : Colors.black,
-                fontWeight: FontWeight.bold,
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: units.map((unit) {
+          return GestureDetector(
+            onTap: () {
+              setState(() {
+                selectedUnit = unit == 'Tất cả' ? null : unit;
+              });
+            },
+            child: Container(
+              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+              decoration: BoxDecoration(
+                color: selectedUnit == unit ? Colors.green : Colors.white,
+                border: Border.all(color: Colors.green),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Text(
+                unit == "Tất cả" ? "Tất cả" : "Khối $unit",
+                style: TextStyle(
+                  color: selectedUnit == unit ? Colors.white : Colors.black,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
-          ),
-        );
-      }).toList(),
+          );
+        }).toList(),
+      ),
     );
   }
 

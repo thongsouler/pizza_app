@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pizza_app/blocs/authentication_bloc/authentication_bloc.dart';
 import 'package:pizza_app/components/custom_appbar.dart';
 import 'package:pizza_app/screens/auth/blocs/sing_in_bloc/sign_in_bloc.dart';
-import 'package:pizza_app/screens/home/blocs/get_pizza_bloc/get_pizza_bloc.dart';
+import 'package:pizza_app/screens/home/blocs/places/get_place_bloc.dart';
 
 import 'package:pizza_app/screens/home/views/details_screen.dart';
 import 'package:pizza_app/screens/home/views/history_places_screen.dart';
@@ -77,7 +77,8 @@ class _HomeScreenState extends State<HomeScreen>
                       ),
                       const SizedBox(height: 20),
                       Text(
-                        'CHÀO ${widget.userData?.name == 'admin' ? 'ADMIN' : widget.userData?.name},',
+                        'CHÀO ${widget.userData?.name == 'admin' ? 'ADMIN' : widget.userData?.name},'
+                            .toUpperCase(),
                         style: const TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,

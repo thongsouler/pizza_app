@@ -36,8 +36,10 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
       emit(PlacesLoadInProgress());
       try {
         // Fetch data from Firestore
-        final placesSnapshot =
-            await FirebaseFirestore.instance.collection('users').get();
+        final placesSnapshot = await FirebaseFirestore.instance
+            .collection('users')
+            .where('name', isNotEqualTo: 'admin')
+            .get();
         final places = placesSnapshot.docs.map((doc) {
           final data = doc.data();
           return MyUser(

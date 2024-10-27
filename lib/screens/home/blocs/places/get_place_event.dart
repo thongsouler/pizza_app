@@ -1,4 +1,4 @@
-part of 'get_pizza_bloc.dart';
+part of 'get_place_bloc.dart';
 
  class GetPizzaEvent extends Equatable {
   const GetPizzaEvent();

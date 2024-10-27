@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pizza_app/blocs/authentication_bloc/authentication_bloc.dart';
 import 'package:pizza_app/screens/auth/blocs/sing_in_bloc/sign_in_bloc.dart';
-import 'package:pizza_app/screens/home/blocs/get_pizza_bloc/get_pizza_bloc.dart';
+import 'package:pizza_app/screens/home/blocs/places/get_place_bloc.dart';
 
 import 'package:pizza_app/screens/home/views/home_screen.dart';
 import 'package:pizza_repository/pizza_repository.dart';
@@ -52,7 +52,13 @@ class _QrScanScreenState extends State<QrScanScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Quét Mã QR'),
+        title: const Text(
+          'Quét Mã QR',
+          style: TextStyle(
+              fontWeight: FontWeight.w900, fontSize: 24, color: Colors.white),
+        ),
+        backgroundColor: Colors.lightGreen,
+        iconTheme: IconThemeData(color: Colors.white),
       ),
       body: Stack(
         alignment: Alignment.center,
