@@ -57,9 +57,9 @@ class _SignInScreenState extends State<SignInScreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          const SizedBox(height: 80),
+          const SizedBox(height: 40),
           SizedBox(
-            width: MediaQuery.of(context).size.width * 0.5,
+            width: MediaQuery.of(context).size.width * 0.7,
             height: 60,
             child: TextButton(
               onPressed: () {
@@ -87,27 +87,38 @@ class _SignInScreenState extends State<SignInScreen> {
               style: TextButton.styleFrom(
                 elevation: 3.0,
                 shadowColor: Colors.black,
-                backgroundColor: Colors.lightBlue.withOpacity(0.9),
+                backgroundColor:
+                    const Color.fromARGB(255, 55, 190, 252).withOpacity(0.9),
                 foregroundColor: Colors.white,
               ),
               child: const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                 child: Text(
                   'Quét QR CCCD',
-                  style: TextStyle(color: Colors.white),
+                  style: TextStyle(color: Colors.white, fontSize: 20),
                 ),
               ),
             ),
           ),
           const SizedBox(height: 30),
           SizedBox(
-            width: MediaQuery.of(context).size.width * 0.5,
+            width: MediaQuery.of(context).size.width * 0.7,
             height: 60,
             child: TextButton(
               onPressed: () {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('Chức năng đang phát triển!')),
                 );
+
+                // globals.currentUser = MyUser(
+                //   userId: '88888',
+                //   name: 'admin',
+                //   idcode: '88888',
+                //   address: 'Hanoi',
+                // );
+                // context
+                //     .read<SignInBloc>()
+                //     .add(SignInRequired(globals.currentUser!));
                 // Navigator.push(
                 //   context,
                 //   MaterialPageRoute<void>(
@@ -132,14 +143,15 @@ class _SignInScreenState extends State<SignInScreen> {
               style: TextButton.styleFrom(
                 elevation: 3.0,
                 shadowColor: Colors.black,
-                backgroundColor: Colors.lightBlue.withOpacity(0.9),
+                backgroundColor:
+                    const Color.fromARGB(255, 55, 190, 252).withOpacity(0.9),
                 foregroundColor: Colors.white,
               ),
               child: const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                 child: Text(
                   'Điểm danh',
-                  style: TextStyle(color: Colors.white),
+                  style: TextStyle(color: Colors.white, fontSize: 20),
                 ),
               ),
             ),
@@ -147,7 +159,7 @@ class _SignInScreenState extends State<SignInScreen> {
           const Spacer(),
           if (!signInRequired)
             SizedBox(
-              width: MediaQuery.of(context).size.width * 0.5,
+              width: MediaQuery.of(context).size.width * 0.7,
               height: 60,
               child: TextButton(
                 onPressed: () {
@@ -163,7 +175,7 @@ class _SignInScreenState extends State<SignInScreen> {
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: Colors.red,
-                      fontSize: 16,
+                      fontSize: 20,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -186,7 +198,10 @@ class _SignInScreenState extends State<SignInScreen> {
       builder: (BuildContext dialogContext) {
         // Use a separate context for dialog
         return AlertDialog(
-          title: const Text('Nhập mật khẩu admin'),
+          title: const Text(
+            'Nhập mật khẩu admin',
+            style: TextStyle(fontSize: 20),
+          ),
           content: TextField(
             controller: adminPasswordController,
             obscureText: true,
@@ -196,15 +211,20 @@ class _SignInScreenState extends State<SignInScreen> {
           ),
           actions: <Widget>[
             TextButton(
-              child: const Text('Hủy'),
+              child: const Text(
+                'Hủy',
+                style: TextStyle(fontSize: 18),
+              ),
               onPressed: () {
                 Navigator.of(dialogContext).pop(); // Close dialog
               },
             ),
             TextButton(
-              child: const Text('Xác nhận'),
+              child: const Text(
+                'Xác nhận',
+                style: TextStyle(fontSize: 18),
+              ),
               onPressed: () {
-                Focus.of(context).unfocus();
                 if (adminPasswordController.text == '888') {
                   Navigator.of(dialogContext).pop(); // Close dialog first
                   // Now navigate to the HomeScreen in the main context

@@ -56,7 +56,8 @@ class _ListPlaceScreenState extends State<ListPlaceScreen> {
                 decoration: InputDecoration(
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
-                    borderSide: const BorderSide(color: Colors.lightGreen),
+                    borderSide: const BorderSide(
+                        color: const Color.fromARGB(255, 55, 190, 252)),
                   ),
                   prefixIcon: const Icon(Icons.search),
                   hintText:
@@ -89,27 +90,39 @@ class _ListPlaceScreenState extends State<ListPlaceScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: units.map((unit) {
-          return GestureDetector(
-            onTap: () {
-              setState(() {
-                selectedUnit = unit == 'Tất cả' ? null : unit;
-              });
-            },
-            child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-              decoration: BoxDecoration(
-                color: selectedUnit == unit ? Colors.green : Colors.white,
-                border: Border.all(color: Colors.green),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Text(
-                unit == "Tất cả" ? "Tất cả" : "Khối $unit",
-                style: TextStyle(
-                  color: selectedUnit == unit ? Colors.white : Colors.black,
-                  fontWeight: FontWeight.bold,
+          return Row(
+            children: [
+              GestureDetector(
+                onTap: () {
+                  setState(() {
+                    selectedUnit = unit == 'Tất cả' ? null : unit;
+                  });
+                },
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                  decoration: BoxDecoration(
+                    color: selectedUnit == unit
+                        ? const Color.fromARGB(255, 55, 190, 252)
+                        : Colors.white,
+                    border: Border.all(
+                        color: const Color.fromARGB(255, 55, 190, 252)),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Text(
+                    unit == "Tất cả" ? "Tất cả" : "Khối $unit",
+                    style: TextStyle(
+                        color:
+                            selectedUnit == unit ? Colors.white : Colors.black,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20),
+                  ),
                 ),
               ),
-            ),
+              SizedBox(
+                width: 8.0,
+              )
+            ],
           );
         }).toList(),
       ),
@@ -143,7 +156,8 @@ class _ListPlaceScreenState extends State<ListPlaceScreen> {
               itemBuilder: (context, int i) {
                 return Container(
                   decoration: BoxDecoration(
-                    border: Border.all(color: Colors.green),
+                    border: Border.all(
+                        color: const Color.fromARGB(255, 55, 190, 252)),
                     borderRadius: BorderRadius.circular(10),
                     color: Colors.white,
                     boxShadow: [
@@ -180,7 +194,7 @@ class _ListPlaceScreenState extends State<ListPlaceScreen> {
                         Text(
                           filteredPizzas[i].name ?? '',
                           style: const TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold),
+                              fontSize: 22, fontWeight: FontWeight.bold),
                           textAlign: TextAlign.center,
                         ),
                       ],

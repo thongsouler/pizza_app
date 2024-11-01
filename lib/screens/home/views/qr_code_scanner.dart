@@ -57,7 +57,7 @@ class _QrScanScreenState extends State<QrScanScreen>
           style: TextStyle(
               fontWeight: FontWeight.w900, fontSize: 24, color: Colors.white),
         ),
-        backgroundColor: Colors.lightGreen,
+        backgroundColor: const Color.fromARGB(255, 55, 190, 252),
         iconTheme: IconThemeData(color: Colors.white),
       ),
       body: Stack(

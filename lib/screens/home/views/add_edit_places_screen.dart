@@ -32,6 +32,11 @@ class _AddEditPlaceScreenState extends State<AddEditPlaceScreen> {
     super.initState();
     if (widget.placeId != null) {
       _loadPlaceData();
+    } else {
+      // Tự động điền Tên địa điểm nếu khối đã chọn và loại khu vực là lớp học
+      if (_selectedPlaceType == 'class') {
+        _updatePlaceName();
+      }
     }
   }
 
@@ -67,8 +72,23 @@ class _AddEditPlaceScreenState extends State<AddEditPlaceScreen> {
     }
   }
 
+  void _updatePlaceName() {
+    if (_selectedPlaceType == 'class') {
+      _nameController.text = 'Lớp $_selectedGrade';
+    } else {
+      _nameController.clear();
+    }
+  }
+
   void _savePlace() async {
     if (_formKey.currentState!.validate()) {
+      if (_imageUrl == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Vui lòng chọn ảnh')),
+        );
+        return;
+      }
+
       final data = {
         'id': widget.placeId ?? _uuid.v4(),
         'name': _nameController.text,
@@ -98,7 +118,7 @@ class _AddEditPlaceScreenState extends State<AddEditPlaceScreen> {
     return Scaffold(
       appBar: AppBar(
         iconTheme: IconThemeData(color: Colors.white),
-        backgroundColor: Colors.lightGreen,
+        backgroundColor: const Color.fromARGB(255, 55, 190, 252),
         title: Text(
           widget.placeId != null ? 'Chỉnh sửa địa điểm' : 'Thêm mới địa điểm',
           style: TextStyle(
@@ -114,40 +134,38 @@ class _AddEditPlaceScreenState extends State<AddEditPlaceScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                TextFormField(
-                  controller: _nameController,
-                  decoration: const InputDecoration(labelText: 'Tên địa điểm'),
-                  validator: (value) =>
-                      value!.isEmpty ? 'Nhập tên địa điểm' : null,
-                ),
-                const SizedBox(height: 10),
-
                 // ChoiceChips for Khu vực selection
-                const Text('Khu vực'),
+                const Text(
+                  'Khu vực',
+                  style: TextStyle(fontSize: 18),
+                ),
                 Wrap(
                   spacing: 10.0,
                   children: [
                     ChoiceChip(
-                      selectedColor: Colors.green, // Color when selected
-                      backgroundColor:
-                          Colors.grey[200], // Color when not selected
+                      selectedColor: const Color.fromARGB(255, 55, 190, 252),
+                      backgroundColor: Colors.grey[200],
                       label: const Text('Lớp học'),
                       selected: _selectedPlaceType == 'class',
                       onSelected: (selected) {
                         setState(() {
                           _selectedPlaceType = 'class';
+                          _updatePlaceName();
                         });
                       },
                     ),
                     ChoiceChip(
-                      selectedColor: Colors.green, // Color when selected
-                      backgroundColor:
-                          Colors.grey[200], // Color when not selected
-                      label: const Text('Khu làm việc'),
+                      selectedColor: const Color.fromARGB(255, 55, 190, 252),
+                      backgroundColor: Colors.grey[200],
+                      label: const Text(
+                        'Khu làm việc',
+                        style: TextStyle(fontSize: 18),
+                      ),
                       selected: _selectedPlaceType == 'work',
                       onSelected: (selected) {
                         setState(() {
                           _selectedPlaceType = 'work';
+                          _updatePlaceName();
                         });
                       },
                     ),
@@ -159,22 +177,25 @@ class _AddEditPlaceScreenState extends State<AddEditPlaceScreen> {
                   visible: _selectedPlaceType == 'class',
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       const SizedBox(height: 10),
-                      const Text('Khối'),
+                      const Text(
+                        'Khối',
+                        style: TextStyle(fontSize: 18),
+                      ),
                       Wrap(
                         spacing: 10.0,
                         children: ['6', '7', '8', '9'].map((grade) {
                           return ChoiceChip(
-                            selectedColor: Colors.green, // Color when selected
-                            backgroundColor:
-                                Colors.grey[200], // Color when not selected
+                            selectedColor:
+                                const Color.fromARGB(255, 55, 190, 252),
+                            backgroundColor: Colors.grey[200],
                             label: Text(grade),
                             selected: _selectedGrade == grade,
                             onSelected: (selected) {
                               setState(() {
                                 _selectedGrade = grade;
+                                _updatePlaceName();
                               });
                             },
                           );
@@ -186,14 +207,16 @@ class _AddEditPlaceScreenState extends State<AddEditPlaceScreen> {
 
                 // ChoiceChip for selecting Dãy nhà
                 const SizedBox(height: 20),
-                const Text('Dãy nhà'),
+                const Text(
+                  'Dãy nhà',
+                  style: TextStyle(fontSize: 18),
+                ),
                 Wrap(
                   spacing: 10.0,
                   children: ['A', 'B', 'C', 'D'].map((row) {
                     return ChoiceChip(
-                      selectedColor: Colors.green, // Color when selected
-                      backgroundColor:
-                          Colors.grey[200], // Color when not selected
+                      selectedColor: const Color.fromARGB(255, 55, 190, 252),
+                      backgroundColor: Colors.grey[200],
                       label: Text(row),
                       selected: _selectedRow == row,
                       onSelected: (selected) {
@@ -208,19 +231,32 @@ class _AddEditPlaceScreenState extends State<AddEditPlaceScreen> {
                 const SizedBox(height: 10),
                 TextFormField(
                   controller: _floorController,
-                  decoration: const InputDecoration(labelText: 'Tầng'),
+                  decoration: const InputDecoration(
+                      labelText: 'Tầng', labelStyle: TextStyle(fontSize: 18)),
                 ),
                 const SizedBox(height: 10),
                 TextFormField(
                   controller: _roomController,
-                  decoration: const InputDecoration(labelText: 'Phòng'),
+                  decoration: const InputDecoration(
+                      labelText: 'Phòng', labelStyle: TextStyle(fontSize: 18)),
+                ),
+                const SizedBox(height: 10),
+                TextFormField(
+                  controller: _nameController,
+                  decoration: const InputDecoration(
+                      labelText: 'Tên địa điểm',
+                      labelStyle: TextStyle(fontSize: 18)),
+                  validator: (value) =>
+                      value!.isEmpty ? 'Nhập tên địa điểm' : null,
                 ),
                 const SizedBox(height: 20),
+
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(_imageUrl != null ? 'Ảnh đã chọn' : 'Chưa chọn ảnh'),
+                    Text(_imageUrl != null ? 'Ảnh đã chọn' : 'Chưa chọn ảnh',
+                        style: TextStyle(fontSize: 18)),
                     Visibility(
                       visible: _imageUrl != null,
                       child: Container(
@@ -253,7 +289,8 @@ class _AddEditPlaceScreenState extends State<AddEditPlaceScreen> {
                     ),
                     ElevatedButton(
                       onPressed: _pickImage,
-                      child: const Text('Chọn ảnh'),
+                      child: const Text('Chọn ảnh',
+                          style: TextStyle(fontSize: 18)),
                     ),
                   ],
                 ),
@@ -264,14 +301,17 @@ class _AddEditPlaceScreenState extends State<AddEditPlaceScreen> {
                     style: TextButton.styleFrom(
                       elevation: 3.0,
                       shadowColor: Colors.black,
-                      backgroundColor: Colors.lightGreen.withOpacity(0.9),
+                      backgroundColor: const Color.fromARGB(255, 55, 190, 252)
+                          .withOpacity(0.9), 
                       foregroundColor: Colors.white,
                     ),
                     onPressed: _savePlace,
                     child: SizedBox(
                         width: 200,
-                        height: 40,
-                        child: Center(child: const Text('Xác nhận'))),
+                        height: 60,
+                        child: Center(
+                            child: const Text('Xác nhận',
+                                style: TextStyle(fontSize: 20)))),
                   ),
                 ),
               ],

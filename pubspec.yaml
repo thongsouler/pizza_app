@@ -30,6 +30,10 @@ dependencies:
   firebase_storage: ^11.6.0
   image_picker: 
   uuid:
+  image:
+  esc_pos_utils:
+  permission_handler:
+  print_bluetooth_thermal:
 
   user_repository:
     path: packages/user_repository

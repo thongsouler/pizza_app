@@ -224,10 +224,11 @@ class _HomeScreenState extends State<HomeScreen>
       child: GestureDetector(
         onTap: onTap,
         child: Container(
+          height: 150,
           padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 30),
           margin: const EdgeInsets.symmetric(horizontal: 8),
           decoration: BoxDecoration(
-            color: Colors.lightGreen,
+            color: const Color.fromARGB(255, 55, 190, 252),
             borderRadius: BorderRadius.circular(10),
             boxShadow: [
               BoxShadow(
@@ -244,7 +245,7 @@ class _HomeScreenState extends State<HomeScreen>
               textAlign: TextAlign.center,
               style: const TextStyle(
                 color: Colors.white,
-                fontSize: 18,
+                fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),
             ),

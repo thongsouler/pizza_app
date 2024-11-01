@@ -29,6 +29,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
+      resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: Center(
           child: SizedBox(
@@ -109,7 +110,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                                       'STEM - THCS HẢI XUÂN',
                                       textAlign: TextAlign.center,
                                       textStyle: const TextStyle(
-                                        fontSize: 36.0,
+                                        fontSize: 40.0,
                                         fontFamily: 'Horizon',
                                         shadows: [
                                           Shadow(

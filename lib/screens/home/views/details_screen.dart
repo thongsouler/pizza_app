@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pizza_app/blocs/authentication_bloc/authentication_bloc.dart';
 import 'package:pizza_app/components/custom_appbar.dart';
+import 'package:pizza_app/components/print_widget.dart';
+import 'package:pizza_app/components/printer_helper.dart';
 import 'package:pizza_app/screens/auth/blocs/sing_in_bloc/sign_in_bloc.dart';
 import 'package:pizza_app/screens/auth/views/welcome_screen.dart';
 import 'package:pizza_repository/pizza_repository.dart';
@@ -92,13 +94,29 @@ class _DetailsScreenState extends State<DetailsScreen> {
               _showImage(context);
             }),
             const SizedBox(height: 10),
-            _buildActionButton(context, "In chỉ dẫn", () {
-              manager.add(SignOutRequired());
-              Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(builder: (context) => const WelcomeScreen()),
-                (route) => false,
-              );
+            _buildActionButton(context, "In chỉ dẫn", () async {
+              // Kết nối với máy in
+              // await _printHelper.connectToPrinter();
+
+              // In ảnh từ URL
+              // await _printHelper.printImageFromUrl(widget.pizza.picture ?? '');
+
+              // Ngắt kết nối khi xong
+              // await _printHelper.disconnectPrinter();
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (_) => PrintingWidget(
+                            
+                          )));
+
+              await Future.delayed(Duration(milliseconds: 600));
+              // manager.add(SignOutRequired());
+              // Navigator.pushAndRemoveUntil(
+              //   context,
+              //   MaterialPageRoute(builder: (context) => const WelcomeScreen()),
+              //   (route) => false,
+              // );
             }),
           ],
         ),
@@ -168,7 +186,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
         onPressed: onPressed,
         style: TextButton.styleFrom(
           elevation: 3.0,
-          backgroundColor: Colors.lightGreen,
+          backgroundColor: const Color.fromARGB(255, 55, 190, 252),
           foregroundColor: Colors.white,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
@@ -225,7 +243,9 @@ class _DetailsScreenState extends State<DetailsScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                _buildPopupButton(context, "Đóng", Colors.lightGreen, () {
+                _buildPopupButton(
+                    context, "Đóng", const Color.fromARGB(255, 55, 190, 252),
+                    () {
                   Navigator.pop(context);
                 }),
                 _buildPopupButton(context, "Kết thúc", Colors.red, () {

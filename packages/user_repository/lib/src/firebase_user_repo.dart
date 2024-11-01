@@ -79,12 +79,22 @@ class FirebaseUserRepo implements UserRepository {
       rethrow;
     }
   }
-
-  Future<void> setPlace(String userId, String place) async {
+  Future<void> setPlace(String userId, String newPlace) async {
     try {
-      await usersCollection.doc(userId).update({
-        'toPlace': place,
-      });
+      // Lấy giá trị hiện tại của `toPlace`
+      DocumentSnapshot userDoc = await usersCollection.doc(userId).get();
+      if (userDoc.exists) {
+        String currentPlaces = userDoc.get('toPlace') ?? '';
+
+        // Nối thêm giá trị mới, ngăn cách bằng dấu phẩy nếu `toPlace` không trống
+        String updatedPlaces =
+            currentPlaces.isEmpty ? newPlace : '$currentPlaces, $newPlace';
+
+        // Cập nhật lại `toPlace` trong Firestore
+        await usersCollection.doc(userId).update({
+          'toPlace': updatedPlaces,
+        });
+      }
     } catch (e) {
       log(e.toString());
       rethrow;

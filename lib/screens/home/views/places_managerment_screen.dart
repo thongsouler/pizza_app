@@ -24,10 +24,13 @@ class _PlacesManagementScreenState extends State<PlacesManagementScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.lightGreen,
+        backgroundColor: const Color.fromARGB(255, 55, 190, 252),
         iconTheme: IconThemeData(color: Colors.white),
-        title: const Text('Quản lý địa điểm',  style: TextStyle(
-                fontWeight: FontWeight.w900, fontSize: 24, color: Colors.white),),
+        title: const Text(
+          'Quản lý địa điểm',
+          style: TextStyle(
+              fontWeight: FontWeight.w900, fontSize: 24, color: Colors.white),
+        ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
@@ -50,9 +53,10 @@ class _PlacesManagementScreenState extends State<PlacesManagementScreen> {
                       value: type,
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Text(type == 'class'
-                            ? 'Khu vực lớp học'
-                            : 'Khu làm việc'),
+                        child: Text(
+                          type == 'class' ? 'Khu vực lớp học' : 'Khu làm việc',
+                          style: TextStyle(fontSize: 18),
+                        ),
                       ),
                     );
                   }).toList(),
@@ -81,7 +85,7 @@ class _PlacesManagementScreenState extends State<PlacesManagementScreen> {
                       ),
                     );
                   },
-                  child: const Text('Thêm mới'),
+                  child: const Text('Thêm mới', style: TextStyle(fontSize: 20),),
                 ),
               ],
             ),
@@ -133,13 +137,15 @@ class _PlacesManagementScreenState extends State<PlacesManagementScreen> {
               ),
               child: Text(
                 place['name'] ?? '',
-                style: const TextStyle(fontWeight: FontWeight.bold),
+                style:
+                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
               ),
             ),
           ),
           const SizedBox(width: 8.0),
           ElevatedButton(
-            style: ElevatedButton.styleFrom(primary: Colors.green),
+            style: ElevatedButton.styleFrom(
+                primary: const Color.fromARGB(255, 55, 190, 252)),
             onPressed: () {
               // Edit action
               Navigator.push(
@@ -162,7 +168,7 @@ class _PlacesManagementScreenState extends State<PlacesManagementScreen> {
             },
             child: const Text(
               'Sửa',
-              style: TextStyle(color: Colors.white),
+              style: TextStyle(color: Colors.white, fontSize: 20),
             ),
           ),
           const SizedBox(width: 8.0),
@@ -174,7 +180,7 @@ class _PlacesManagementScreenState extends State<PlacesManagementScreen> {
             },
             child: const Text(
               'Xoá',
-              style: TextStyle(color: Colors.white),
+              style: TextStyle(color: Colors.white, fontSize: 20),
             ),
           ),
         ],

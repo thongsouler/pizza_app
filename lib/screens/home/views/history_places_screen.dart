@@ -24,9 +24,12 @@ class _PlacesScreenState extends State<PlacesScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Danh sách người dùng',  style: TextStyle(
-                fontWeight: FontWeight.w900, fontSize: 24, color: Colors.white),),
-        backgroundColor: Colors.lightGreen,
+        title: const Text(
+          'Danh sách người dùng',
+          style: TextStyle(
+              fontWeight: FontWeight.w900, fontSize: 24, color: Colors.white),
+        ),
+        backgroundColor: const Color.fromARGB(255, 55, 190, 252),
         iconTheme: IconThemeData(color: Colors.white),
       ),
       body: Column(
@@ -148,7 +151,7 @@ class _PlacesScreenState extends State<PlacesScreen> {
               _buildTableCell(user.name),
               _buildTableCell(user.idcode),
               _buildTableCell(user.address),
-              _buildTableCell(user.toPlace),
+              _buildTableCell(user.toPlace, isLongText: true),
             ],
           );
         },
@@ -156,7 +159,7 @@ class _PlacesScreenState extends State<PlacesScreen> {
     );
   }
 
-  _buildTableCell(String? value) {
+  _buildTableCell(String? value, {bool isLongText = false}) {
     return ExpandableTableCell(
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 4.0),
@@ -165,10 +168,39 @@ class _PlacesScreenState extends State<PlacesScreen> {
         ),
         child: Align(
           alignment: Alignment.center,
-          child: Text(
-            value ?? '',
-            style: const TextStyle(fontWeight: FontWeight.w500),
-          ),
+          child: isLongText && value != null && value.length > 30
+              ? InkWell(
+                  onTap: () {
+                    // Hiển thị dialog khi người dùng nhấn vào
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: const Text("Điểm đến tìm kiếm"),
+                          content: Text(value),
+                          actions: <Widget>[
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text("Đóng"),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  },
+                  child: Text(
+                    '${value.substring(0, 30)}...', // Giới hạn hiển thị
+                    style: const TextStyle(fontWeight: FontWeight.w500),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 2,
+                  ),
+                )
+              : Text(
+                  value ?? '',
+                  style: const TextStyle(fontWeight: FontWeight.w500),
+                ),
         ),
       ),
     );
