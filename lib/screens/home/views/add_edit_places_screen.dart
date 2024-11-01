@@ -19,12 +19,12 @@ class _AddEditPlaceScreenState extends State<AddEditPlaceScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _floorController = TextEditingController();
   final TextEditingController _roomController = TextEditingController();
+  final TextEditingController _rowController = TextEditingController();
   String? _imageUrl;
   final _uuid = Uuid();
 
   // Properties for selected area type and building row
   String _selectedPlaceType = 'class'; // Default to "Lớp học"
-  String _selectedRow = 'A'; // Default to "A"
   String _selectedGrade = '6'; // Default to "6"
 
   @override
@@ -52,7 +52,7 @@ class _AddEditPlaceScreenState extends State<AddEditPlaceScreen> {
       _roomController.text = data['room'] ?? '';
       _imageUrl = data['picture'];
       _selectedPlaceType = data['location'] ?? 'class';
-      _selectedRow = data['row'] ?? 'A';
+      _rowController.text = data['row'] ?? 'A';
       _selectedGrade = data['unit'] ?? '6';
       setState(() {});
     }
@@ -94,7 +94,7 @@ class _AddEditPlaceScreenState extends State<AddEditPlaceScreen> {
         'name': _nameController.text,
         'floor': _floorController.text,
         'room': _roomController.text,
-        'row': _selectedRow,
+        'row': _rowController.text,
         'unit': _selectedGrade,
         'picture': _imageUrl,
         'location': _selectedPlaceType,
@@ -207,25 +207,12 @@ class _AddEditPlaceScreenState extends State<AddEditPlaceScreen> {
 
                 // ChoiceChip for selecting Dãy nhà
                 const SizedBox(height: 20),
-                const Text(
-                  'Dãy nhà',
-                  style: TextStyle(fontSize: 18),
-                ),
-                Wrap(
-                  spacing: 10.0,
-                  children: ['A', 'B', 'C', 'D'].map((row) {
-                    return ChoiceChip(
-                      selectedColor: const Color.fromARGB(255, 55, 190, 252),
-                      backgroundColor: Colors.grey[200],
-                      label: Text(row),
-                      selected: _selectedRow == row,
-                      onSelected: (selected) {
-                        setState(() {
-                          _selectedRow = row;
-                        });
-                      },
-                    );
-                  }).toList(),
+                const SizedBox(height: 10),
+                TextFormField(
+                  controller: _rowController,
+                  decoration: const InputDecoration(
+                      labelText: 'Dãy nhà',
+                      labelStyle: TextStyle(fontSize: 18)),
                 ),
 
                 const SizedBox(height: 10),
@@ -302,7 +289,7 @@ class _AddEditPlaceScreenState extends State<AddEditPlaceScreen> {
                       elevation: 3.0,
                       shadowColor: Colors.black,
                       backgroundColor: const Color.fromARGB(255, 55, 190, 252)
-                          .withOpacity(0.9), 
+                          .withOpacity(0.9),
                       foregroundColor: Colors.white,
                     ),
                     onPressed: _savePlace,
