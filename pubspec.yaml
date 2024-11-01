@@ -31,9 +31,8 @@ dependencies:
   image_picker: 
   uuid:
   image:
-  esc_pos_utils: 1.1.0
   permission_handler:
-  print_bluetooth_thermal: 1.1.1
+  bluetooth_print:
 
   user_repository:
     path: packages/user_repository

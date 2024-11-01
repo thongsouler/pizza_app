@@ -22,7 +22,6 @@ class _SignInScreenState extends State<SignInScreen> {
   final passwordController = TextEditingController();
   final emailController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  bool signInRequired = false;
   IconData iconPassword = CupertinoIcons.eye_fill;
   bool obscurePassword = true;
   String? _errorMsg;
@@ -37,22 +36,7 @@ class _SignInScreenState extends State<SignInScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocListener<SignInBloc, SignInState>(
-      listener: (context, state) {
-        if (state is SignInSuccess) {
-          setState(() {
-            signInRequired = false;
-          });
-        } else if (state is SignInProcess) {
-          setState(() {
-            signInRequired = true;
-          });
-        } else if (state is SignInFailure) {
-          setState(() {
-            signInRequired = false;
-            _errorMsg = 'Invalid email or password';
-          });
-        }
-      },
+      listener: (context, state) {},
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -110,35 +94,35 @@ class _SignInScreenState extends State<SignInScreen> {
                   const SnackBar(content: Text('Chức năng đang phát triển!')),
                 );
 
-                // globals.currentUser = MyUser(
-                //   userId: '88888',
-                //   name: 'admin',
-                //   idcode: '88888',
-                //   address: 'Hanoi',
-                // );
-                // context
-                //     .read<SignInBloc>()
-                //     .add(SignInRequired(globals.currentUser!));
-                // Navigator.push(
-                //   context,
-                //   MaterialPageRoute<void>(
-                //     builder: (BuildContext context) {
-                //       return MultiBlocProvider(
-                //         providers: [
-                //           BlocProvider.value(
-                //             value: manager,
-                //           ),
-                //           BlocProvider(
-                //             create: (context) =>
-                //                 GetPizzaBloc(FirebasePizzaRepo())
-                //                   ..add(GetPizza()),
-                //           ),
-                //         ],
-                //         child: const HomeScreen(),
-                //       );
-                //     },
-                //   ),
-                // );
+                globals.currentUser = MyUser(
+                  userId: '88888',
+                  name: 'admin',
+                  idcode: '88888',
+                  address: 'Hanoi',
+                );
+                context
+                    .read<SignInBloc>()
+                    .add(SignInRequired(globals.currentUser!));
+                Navigator.push(
+                  context,
+                  MaterialPageRoute<void>(
+                    builder: (BuildContext context) {
+                      return MultiBlocProvider(
+                        providers: [
+                          BlocProvider.value(
+                            value: manager,
+                          ),
+                          BlocProvider(
+                            create: (context) =>
+                                GetPizzaBloc(FirebasePizzaRepo())
+                                  ..add(GetPizza()),
+                          ),
+                        ],
+                        child: const HomeScreen(),
+                      );
+                    },
+                  ),
+                );
               },
               style: TextButton.styleFrom(
                 elevation: 3.0,
@@ -157,33 +141,30 @@ class _SignInScreenState extends State<SignInScreen> {
             ),
           ),
           const Spacer(),
-          if (!signInRequired)
-            SizedBox(
-              width: MediaQuery.of(context).size.width * 0.7,
-              height: 60,
-              child: TextButton(
-                onPressed: () {
-                  _showAdminPasswordDialog();
-                },
-                style: TextButton.styleFrom(
-                    shadowColor: Colors.black,
-                    backgroundColor: Colors.white.withOpacity(0.4)),
-                child: const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                  child: Text(
-                    'Đăng nhập Admin',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Colors.red,
-                      fontSize: 20,
-                      fontWeight: FontWeight.w600,
-                    ),
+          SizedBox(
+            width: MediaQuery.of(context).size.width * 0.7,
+            height: 60,
+            child: TextButton(
+              onPressed: () {
+                _showAdminPasswordDialog();
+              },
+              style: TextButton.styleFrom(
+                  shadowColor: Colors.black,
+                  backgroundColor: Colors.white.withOpacity(0.4)),
+              child: const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                child: Text(
+                  'Đăng nhập Admin',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.red,
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ),
-            )
-          else
-            const CircularProgressIndicator(),
+            ),
+          ),
           const SizedBox(height: 20),
         ],
       ),
