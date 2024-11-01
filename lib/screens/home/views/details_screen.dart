@@ -1,9 +1,9 @@
+import 'package:diacritic/diacritic.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pizza_app/blocs/authentication_bloc/authentication_bloc.dart';
 import 'package:pizza_app/components/custom_appbar.dart';
 import 'package:pizza_app/components/print_widget.dart';
-import 'package:pizza_app/components/printer_helper.dart';
 import 'package:pizza_app/screens/auth/blocs/sing_in_bloc/sign_in_bloc.dart';
 import 'package:pizza_app/screens/auth/views/welcome_screen.dart';
 import 'package:pizza_repository/pizza_repository.dart';
@@ -95,28 +95,15 @@ class _DetailsScreenState extends State<DetailsScreen> {
             }),
             const SizedBox(height: 10),
             _buildActionButton(context, "In chỉ dẫn", () async {
-              // Kết nối với máy in
-              // await _printHelper.connectToPrinter();
-
-              // In ảnh từ URL
-              // await _printHelper.printImageFromUrl(widget.pizza.picture ?? '');
-
-              // Ngắt kết nối khi xong
-              // await _printHelper.disconnectPrinter();
               Navigator.push(
                   context,
                   MaterialPageRoute(
                       builder: (_) => PrintingWidget(
-                            
+                            imageUrl: widget.pizza.picture ?? '',
+                            textToPrint: removeDiacritics(
+                              'Dãy nhà ${widget.pizza.row} - Tầng ${widget.pizza.floor} - Phòng ${widget.pizza.room}',
+                            ),
                           )));
-
-              await Future.delayed(Duration(milliseconds: 600));
-              // manager.add(SignOutRequired());
-              // Navigator.pushAndRemoveUntil(
-              //   context,
-              //   MaterialPageRoute(builder: (context) => const WelcomeScreen()),
-              //   (route) => false,
-              // );
             }),
           ],
         ),
@@ -248,14 +235,14 @@ class _DetailsScreenState extends State<DetailsScreen> {
                     () {
                   Navigator.pop(context);
                 }),
-                _buildPopupButton(context, "Kết thúc", Colors.red, () {
-                  Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const WelcomeScreen()),
-                    (route) => false, // This will remove all previous routes
-                  );
-                }),
+                // _buildPopupButton(context, "Kết thúc", Colors.red, () {
+                //   Navigator.pushAndRemoveUntil(
+                //     context,
+                //     MaterialPageRoute(
+                //         builder: (context) => const WelcomeScreen()),
+                //     (route) => false, // This will remove all previous routes
+                //   );
+                // }),
               ],
             ),
           ],
