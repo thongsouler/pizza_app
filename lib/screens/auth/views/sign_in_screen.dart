@@ -94,35 +94,35 @@ class _SignInScreenState extends State<SignInScreen> {
                   const SnackBar(content: Text('Chức năng đang phát triển!')),
                 );
 
-                globals.currentUser = MyUser(
-                  userId: '88888',
-                  name: 'admin',
-                  idcode: '88888',
-                  address: 'Hanoi',
-                );
-                context
-                    .read<SignInBloc>()
-                    .add(SignInRequired(globals.currentUser!));
-                Navigator.push(
-                  context,
-                  MaterialPageRoute<void>(
-                    builder: (BuildContext context) {
-                      return MultiBlocProvider(
-                        providers: [
-                          BlocProvider.value(
-                            value: manager,
-                          ),
-                          BlocProvider(
-                            create: (context) =>
-                                GetPizzaBloc(FirebasePizzaRepo())
-                                  ..add(GetPizza()),
-                          ),
-                        ],
-                        child: const HomeScreen(),
-                      );
-                    },
-                  ),
-                );
+                // globals.currentUser = MyUser(
+                //   userId: '88888',
+                //   name: 'admin',
+                //   idcode: '88888',
+                //   address: 'Hanoi',
+                // );
+                // context
+                //     .read<SignInBloc>()
+                //     .add(SignInRequired(globals.currentUser!));
+                // Navigator.push(
+                //   context,
+                //   MaterialPageRoute<void>(
+                //     builder: (BuildContext context) {
+                //       return MultiBlocProvider(
+                //         providers: [
+                //           BlocProvider.value(
+                //             value: manager,
+                //           ),
+                //           BlocProvider(
+                //             create: (context) =>
+                //                 GetPizzaBloc(FirebasePizzaRepo())
+                //                   ..add(GetPizza()),
+                //           ),
+                //         ],
+                //         child: const HomeScreen(),
+                //       );
+                //     },
+                //   ),
+                // );
               },
               style: TextButton.styleFrom(
                 elevation: 3.0,
