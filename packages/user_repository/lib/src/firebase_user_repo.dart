@@ -34,12 +34,14 @@ class FirebaseUserRepo implements UserRepository {
   Future<void> signIn(MyUser userData) async {
     try {
       await _firebaseAuth.signInAnonymously();
-      String userId = DateFormat('ddMMMyyyy_HH:mm').format(DateTime.now());
+      String userId = DateFormat('dd-MM-yyyy_HH:mm:ss').format(DateTime.now());
+
       var user = MyUser(
         userId: userId,
         name: userData.name,
         idcode: userData.idcode,
         address: userData.address,
+        timestamp: FieldValue.serverTimestamp(),
       );
       await setUserData(user);
       globals.currentUser = user;
@@ -79,6 +81,7 @@ class FirebaseUserRepo implements UserRepository {
       rethrow;
     }
   }
+
   Future<void> setPlace(String userId, String newPlace) async {
     try {
       // Lấy giá trị hiện tại của `toPlace`

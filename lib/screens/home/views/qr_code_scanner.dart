@@ -89,12 +89,18 @@ class _QrScanScreenState extends State<QrScanScreen>
     });
   }
 
-  void _processScannedData(String data) {
+  Future<void> _processScannedData(String data) async {
     controller?.pauseCamera();
     setState(() {
       qrCodeResult = data;
     });
     var rs = parseUserData(qrCodeResult);
+    if (rs.idcode == 'N/A') {
+      showErrorSnackbar("Khôg đúng định dạng mã QR CCCD");
+      await Future.delayed(const Duration(milliseconds: 500));
+      Navigator.pop(context);
+      return;
+    }
     context.read<SignInBloc>().add(SignInRequired(rs));
     Navigator.pushAndRemoveUntil(
       context,
@@ -134,7 +140,6 @@ class _QrScanScreenState extends State<QrScanScreen>
         address: address,
       );
     } catch (e) {
-      showErrorSnackbar("Error parsing QR data: ${e.toString()}");
       return MyUser(idcode: 'N/A', name: 'Unknown', address: 'Unknown');
     }
   }

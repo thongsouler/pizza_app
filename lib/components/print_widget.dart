@@ -202,7 +202,7 @@ class _PrintWidgetState extends State<PrintWidget> {
                                 ];
 
                                 await bluetoothPrint.printReceipt(config, list);
-                                Navigator.of(context).pop();
+                                Navigator.of(context).pop(true);
                               } else {
                                 setState(() {});
                               }

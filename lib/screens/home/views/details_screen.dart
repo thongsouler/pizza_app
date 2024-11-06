@@ -1,6 +1,7 @@
 import 'package:diacritic/diacritic.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pizza_app/app_view.dart';
 import 'package:pizza_app/blocs/authentication_bloc/authentication_bloc.dart';
 import 'package:pizza_app/components/custom_appbar.dart';
 import 'package:pizza_app/components/print_widget.dart';
@@ -95,7 +96,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
             }),
             const SizedBox(height: 10),
             _buildActionButton(context, "In chỉ dẫn", () async {
-              Navigator.push(
+              final result = await Navigator.push(
                   context,
                   MaterialPageRoute(
                       builder: (_) => PrintWidget(
@@ -104,6 +105,17 @@ class _DetailsScreenState extends State<DetailsScreen> {
                               '''${widget.pizza.name}\n Dãy nhà ${widget.pizza.row} - Tầng ${widget.pizza.floor} - Phòng ${widget.pizza.room}''',
                             ),
                           )));
+
+              if (result == true) {
+                context.read<SignInBloc>().add(SignOutRequired());
+                Future.delayed(const Duration(milliseconds: 100), () {
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (context) => const MyAppView()),
+                    (route) => false,
+                  );
+                });
+              }
             }),
           ],
         ),

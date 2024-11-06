@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_expandable_table/flutter_expandable_table.dart';
+import 'package:intl/intl.dart';
 import 'package:pizza_app/screens/auth/blocs/sing_in_bloc/sign_in_bloc.dart';
 import 'package:user_repository/user_repository.dart';
 
@@ -13,11 +14,38 @@ class _PlacesScreenState extends State<PlacesScreen> {
   final GlobalKey _tableKey = GlobalKey();
   String? _nameFilter;
   bool _isAscending = true;
+  DateTime? _startDate;
+  DateTime? _endDate;
+  final DateFormat _formatDate = DateFormat('dd/MM/yyyy');
 
   @override
   void initState() {
     super.initState();
-    context.read<SignInBloc>().add(LoadPlacesRequested());
+    // Tải dữ liệu lần đầu với ngày mặc định
+    context.read<SignInBloc>().add(LoadPlacesRequested(
+        startDate: DateTime(2010, 12, 31), endDate: DateTime(2100, 12, 31)));
+  }
+
+  // Hàm chọn ngày bắt đầu và kết thúc
+  void _selectDateRange(BuildContext context) async {
+    final pickedRange = await showDateRangePicker(
+      context: context,
+      firstDate: DateTime(2000),
+      lastDate: DateTime.now(),
+    );
+
+    if (pickedRange != null) {
+      setState(() {
+        _startDate = pickedRange.start;
+        _endDate = pickedRange.end;
+      });
+
+      // Gọi lại LoadPlacesRequested với ngày mới
+      context.read<SignInBloc>().add(LoadPlacesRequested(
+            startDate: _startDate!,
+            endDate: _endDate!.add(Duration(days: 1)),
+          ));
+    }
   }
 
   @override
@@ -34,6 +62,23 @@ class _PlacesScreenState extends State<PlacesScreen> {
       ),
       body: Column(
         children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: ElevatedButton(
+              onPressed: () => _selectDateRange(context),
+              child: const Text('Chọn khoảng ngày'),
+            ),
+          ),
+          // Hiển thị khoảng thời gian đã chọn
+          if (_startDate != null && _endDate != null)
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                'Chọn từ ngày: ${_formatDate.format(_startDate!)} đến ${_formatDate.format(_endDate!)}',
+                style:
+                    const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+              ),
+            ),
           Expanded(
             child: BlocBuilder<SignInBloc, SignInState>(
               builder: (context, state) {

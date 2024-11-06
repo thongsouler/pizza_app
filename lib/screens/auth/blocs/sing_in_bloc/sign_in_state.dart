@@ -19,4 +19,12 @@ class SignInPlaceUpdateSuccess extends SignInState {}
 
 class SignInPlaceUpdateFailure extends SignInState {}
 
-class LoadPlacesRequested extends SignInEvent {}
+class LoadPlacesRequested extends SignInEvent {
+  final DateTime? startDate;
+  final DateTime? endDate;
+
+  LoadPlacesRequested({this.startDate, this.endDate});
+
+  @override
+  List<Object> get props => [startDate ?? '', endDate ?? ''];
+}

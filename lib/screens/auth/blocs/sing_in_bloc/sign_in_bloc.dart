@@ -35,12 +35,26 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
     on<LoadPlacesRequested>((event, emit) async {
       emit(PlacesLoadInProgress());
       try {
-        // Fetch data from Firestore
+        print('Fetch data from Firestore where only is filtered');
         final placesSnapshot = await FirebaseFirestore.instance
             .collection('users')
             .where('name', isNotEqualTo: 'admin')
             .get();
-        final places = placesSnapshot.docs.map((doc) {
+
+        // Filter the results on the client side by comparing timestamps with startDate and endDate
+        DateTime startDate = event.startDate!;
+        DateTime endDate = event.endDate!;
+
+        // Filter the documents based on timestamp (checking for null)
+        final places = placesSnapshot.docs.where((doc) {
+          final data = doc.data();
+          final timestamp = data['timestamp'];
+          if (timestamp != null) {
+            final date = timestamp.toDate();
+            return date.isAfter(startDate) && date.isBefore(endDate);
+          }
+          return false; // Exclude if timestamp is null or not a valid Timestamp
+        }).map((doc) {
           final data = doc.data();
           return MyUser(
             userId: data['userId'],
@@ -50,6 +64,7 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
             address: data['address'],
           );
         }).toList();
+
         emit(PlacesLoadSuccess(places));
       } catch (e) {
         emit(PlacesLoadFailure());
