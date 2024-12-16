@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:pizza_repository/pizza_repository.dart';
 
 class FirebasePizzaRepo implements PizzaRepo {
-  final pizzaCollection = FirebaseFirestore.instance.collection('places');
+  final pizzaCollection = FirebaseFirestore.instance.collection('places_data');
 
   Future<List<Pizza>> getPizzas() async {
     try {

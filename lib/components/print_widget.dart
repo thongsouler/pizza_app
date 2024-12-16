@@ -6,13 +6,14 @@ import 'package:bluetooth_print/bluetooth_print_model.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:image/image.dart' as img;
+import 'package:pizza_app/globals.dart' as globals;
 
 class PrintWidget extends StatefulWidget {
   final String imageUrl;
   final String textToPrint;
 
   // Add imageUrl as a required parameter
-  PrintWidget({required this.imageUrl, this.textToPrint = 'THCS HAI XUAN'});
+  PrintWidget({required this.imageUrl, this.textToPrint = ''});
 
   @override
   _PrintWidgetState createState() => _PrintWidgetState();

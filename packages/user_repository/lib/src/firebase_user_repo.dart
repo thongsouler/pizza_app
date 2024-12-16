@@ -9,7 +9,7 @@ import 'package:pizza_app/globals.dart' as globals;
 
 class FirebaseUserRepo implements UserRepository {
   final FirebaseAuth _firebaseAuth;
-  final usersCollection = FirebaseFirestore.instance.collection('users');
+  final usersCollection = FirebaseFirestore.instance.collection('user_login');
 
   FirebaseUserRepo({
     FirebaseAuth? firebaseAuth,

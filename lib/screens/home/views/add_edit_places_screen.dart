@@ -23,26 +23,35 @@ class _AddEditPlaceScreenState extends State<AddEditPlaceScreen> {
   String? _imageUrl;
   final _uuid = Uuid();
 
-  // Properties for selected area type and building row
-  String _selectedPlaceType = 'class'; // Default to "Lớp học"
-  String _selectedGrade = '6'; // Default to "6"
+  // Selected place type
+  String? _selectedPlaceType; // Default is null
+  List<String> _placeTypes = []; // Store place types from Firestore
 
   @override
   void initState() {
     super.initState();
     if (widget.placeId != null) {
       _loadPlaceData();
-    } else {
-      // Tự động điền Tên địa điểm nếu khối đã chọn và loại khu vực là lớp học
-      if (_selectedPlaceType == 'class') {
-        _updatePlaceName();
-      }
+    }
+    _fetchPlaceTypes(); // Fetch place types on init
+  }
+
+  Future<void> _fetchPlaceTypes() async {
+    try {
+      final querySnapshot =
+          await FirebaseFirestore.instance.collection('place_types').get();
+      setState(() {
+        _placeTypes =
+            querySnapshot.docs.map((doc) => doc['name'] as String).toList();
+      });
+    } catch (e) {
+      print('Error fetching place types: $e');
     }
   }
 
   void _loadPlaceData() async {
     final doc = await FirebaseFirestore.instance
-        .collection('places')
+        .collection('places_data')
         .doc(widget.placeId)
         .get();
     final data = doc.data();
@@ -53,7 +62,6 @@ class _AddEditPlaceScreenState extends State<AddEditPlaceScreen> {
       _imageUrl = data['picture'];
       _selectedPlaceType = data['location'] ?? 'class';
       _rowController.text = data['row'] ?? 'A';
-      _selectedGrade = data['unit'] ?? '6';
       setState(() {});
     }
   }
@@ -72,22 +80,14 @@ class _AddEditPlaceScreenState extends State<AddEditPlaceScreen> {
     }
   }
 
-  void _updatePlaceName() {
-    if (_selectedPlaceType == 'class') {
-      _nameController.text = 'Lớp $_selectedGrade';
-    } else {
-      _nameController.clear();
-    }
-  }
-
   void _savePlace() async {
     if (_formKey.currentState!.validate()) {
-      if (_imageUrl == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Vui lòng chọn ảnh')),
-        );
-        return;
-      }
+      // if (_imageUrl == null) {
+      //   ScaffoldMessenger.of(context).showSnackBar(
+      //     const SnackBar(content: Text('Vui lòng chọn ảnh')),
+      //   );
+      //   return;
+      // }
 
       final data = {
         'id': widget.placeId ?? _uuid.v4(),
@@ -95,16 +95,15 @@ class _AddEditPlaceScreenState extends State<AddEditPlaceScreen> {
         'floor': _floorController.text,
         'room': _roomController.text,
         'row': _rowController.text,
-        'unit': _selectedGrade,
         'picture': _imageUrl,
         'location': _selectedPlaceType,
       };
 
       if (widget.placeId == null) {
-        await FirebaseFirestore.instance.collection('places').add(data);
+        await FirebaseFirestore.instance.collection('places_data').add(data);
       } else {
         await FirebaseFirestore.instance
-            .collection('places')
+            .collection('places_data')
             .doc(widget.placeId)
             .update(data);
       }
@@ -134,79 +133,31 @@ class _AddEditPlaceScreenState extends State<AddEditPlaceScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // ChoiceChips for Khu vực selection
                 const Text(
                   'Khu vực',
                   style: TextStyle(fontSize: 18),
                 ),
-                Wrap(
-                  spacing: 10.0,
-                  children: [
-                    ChoiceChip(
-                      selectedColor: const Color.fromARGB(255, 55, 190, 252),
-                      backgroundColor: Colors.grey[200],
-                      label: const Text('Lớp học'),
-                      selected: _selectedPlaceType == 'class',
-                      onSelected: (selected) {
-                        setState(() {
-                          _selectedPlaceType = 'class';
-                          _updatePlaceName();
-                        });
-                      },
-                    ),
-                    ChoiceChip(
-                      selectedColor: const Color.fromARGB(255, 55, 190, 252),
-                      backgroundColor: Colors.grey[200],
-                      label: const Text(
-                        'Khu làm việc',
-                        style: TextStyle(fontSize: 18),
-                      ),
-                      selected: _selectedPlaceType == 'work',
-                      onSelected: (selected) {
-                        setState(() {
-                          _selectedPlaceType = 'work';
-                          _updatePlaceName();
-                        });
-                      },
-                    ),
-                  ],
-                ),
-
-                // ChoiceChip for selecting Khối (6, 7, 8, 9)
-                Visibility(
-                  visible: _selectedPlaceType == 'class',
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: 10),
-                      const Text(
-                        'Khối',
-                        style: TextStyle(fontSize: 18),
-                      ),
-                      Wrap(
-                        spacing: 10.0,
-                        children: ['6', '7', '8', '9'].map((grade) {
-                          return ChoiceChip(
-                            selectedColor:
-                                const Color.fromARGB(255, 55, 190, 252),
-                            backgroundColor: Colors.grey[200],
-                            label: Text(grade),
-                            selected: _selectedGrade == grade,
-                            onSelected: (selected) {
-                              setState(() {
-                                _selectedGrade = grade;
-                                _updatePlaceName();
-                              });
-                            },
-                          );
-                        }).toList(),
-                      ),
-                    ],
+                const SizedBox(height: 10),
+                DropdownButtonFormField<String>(
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: 'Chọn khu vực',
                   ),
+                  value: _selectedPlaceType,
+                  items: _placeTypes.map((type) {
+                    return DropdownMenuItem<String>(
+                      value: type,
+                      child: Text(type),
+                    );
+                  }).toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      _selectedPlaceType = value;
+                    });
+                  },
+                  validator: (value) =>
+                      value == null ? 'Vui lòng chọn khu vực' : null,
                 ),
-
-                // ChoiceChip for selecting Dãy nhà
-                const SizedBox(height: 20),
                 const SizedBox(height: 10),
                 TextFormField(
                   controller: _rowController,
@@ -214,7 +165,6 @@ class _AddEditPlaceScreenState extends State<AddEditPlaceScreen> {
                       labelText: 'Dãy nhà',
                       labelStyle: TextStyle(fontSize: 18)),
                 ),
-
                 const SizedBox(height: 10),
                 TextFormField(
                   controller: _floorController,
@@ -237,7 +187,6 @@ class _AddEditPlaceScreenState extends State<AddEditPlaceScreen> {
                       value!.isEmpty ? 'Nhập tên địa điểm' : null,
                 ),
                 const SizedBox(height: 20),
-
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -282,7 +231,6 @@ class _AddEditPlaceScreenState extends State<AddEditPlaceScreen> {
                   ],
                 ),
                 const SizedBox(height: 20),
-
                 Center(
                   child: ElevatedButton(
                     style: TextButton.styleFrom(

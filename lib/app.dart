@@ -10,11 +10,22 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return RepositoryProvider<AuthenticationBloc>(
-      create: (context) => AuthenticationBloc(
-        userRepository: userRepository
+    return  MaterialApp(
+      theme: ThemeData(primarySwatch: Colors.blue),
+      supportedLocales: const [
+        Locale('en', 'US'),
+        Locale('vi', 'VN'), // Thêm ngôn ngữ tiếng Việt
+      ],
+      localizationsDelegates: const [
+        DefaultMaterialLocalizations.delegate,
+        DefaultWidgetsLocalizations.delegate,
+      ],
+      home: RepositoryProvider<AuthenticationBloc>(
+        create: (context) => AuthenticationBloc(
+          userRepository: userRepository
+        ),
+        child: const MyAppView(),
       ),
-      child: const MyAppView(),
     );
   }
 }

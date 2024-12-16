@@ -37,7 +37,7 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
       try {
         print('Fetch data from Firestore where only is filtered');
         final placesSnapshot = await FirebaseFirestore.instance
-            .collection('users')
+            .collection('user_login')
             .where('name', isNotEqualTo: 'admin')
             .get();
 

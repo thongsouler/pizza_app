@@ -7,6 +7,7 @@ import 'package:pizza_repository/pizza_repository.dart';
 
 import 'screens/auth/views/welcome_screen.dart';
 import 'screens/home/views/home_screen.dart';
+import 'package:pizza_app/globals.dart' as globals;
 
 class MyAppView extends StatelessWidget {
   const MyAppView({super.key});
@@ -14,7 +15,7 @@ class MyAppView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        title: 'STEM THCS HAI XUAN',
+        title: globals.schoolName,
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
             colorScheme: ColorScheme.light(

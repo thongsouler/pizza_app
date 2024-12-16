@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pizza_app/screens/auth/blocs/sing_in_bloc/sign_in_bloc.dart';
 import 'package:pizza_app/screens/home/views/add_edit_places_screen.dart';
+import 'package:pizza_app/screens/home/views/place_types_manage_screen.dart';
 
 class PlacesManagementScreen extends StatefulWidget {
   @override
@@ -10,8 +11,7 @@ class PlacesManagementScreen extends StatefulWidget {
 }
 
 class _PlacesManagementScreenState extends State<PlacesManagementScreen> {
-  String? _filterType = 'class'; // Default filter type
-  final List<String> _placeTypes = ['class', 'work']; // Options for filter
+  String? _filterType;
   late final SignInBloc manager;
 
   @override
@@ -25,7 +25,7 @@ class _PlacesManagementScreenState extends State<PlacesManagementScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(255, 55, 190, 252),
-        iconTheme: IconThemeData(color: Colors.white),
+        iconTheme: const IconThemeData(color: Colors.white),
         title: const Text(
           'Quản lý địa điểm',
           style: TextStyle(
@@ -46,46 +46,84 @@ class _PlacesManagementScreenState extends State<PlacesManagementScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                DropdownButton<String>(
-                  value: _filterType,
-                  items: _placeTypes.map((type) {
-                    return DropdownMenuItem(
-                      value: type,
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          type == 'class' ? 'Khu vực lớp học' : 'Khu làm việc',
-                          style: TextStyle(fontSize: 18),
-                        ),
-                      ),
+                // Dropdown for filtering places by type
+                StreamBuilder<QuerySnapshot>(
+                  stream: FirebaseFirestore.instance
+                      .collection('place_types')
+                      .snapshots(),
+                  builder: (context, snapshot) {
+                    if (!snapshot.hasData) {
+                      return const CircularProgressIndicator();
+                    }
+
+                    final placeTypes = snapshot.data!.docs;
+
+                    if (placeTypes.isEmpty) {
+                      return const Text('Không có loại địa điểm.');
+                    }
+
+                    return DropdownButton<String>(
+                      value: _filterType,
+                      items: placeTypes.map((type) {
+                        final String typeName = type['name'];
+                        return DropdownMenuItem(
+                          value: typeName,
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              type['name'] ?? '',
+                              style: const TextStyle(fontSize: 18),
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                      onChanged: (value) {
+                        setState(() {
+                          _filterType = value;
+                        });
+                      },
                     );
-                  }).toList(),
-                  onChanged: (value) {
-                    setState(() {
-                      _filterType = value;
-                    });
                   },
                 ),
-                ElevatedButton(
-                  onPressed: () {
-                    // Add new place action
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute<void>(
-                        builder: (BuildContext context) {
-                          return MultiBlocProvider(
-                            providers: [
-                              BlocProvider.value(
-                                value: manager,
-                              ),
-                            ],
-                            child: AddEditPlaceScreen(),
-                          );
-                        },
-                      ),
-                    );
-                  },
-                  child: const Text('Thêm mới', style: TextStyle(fontSize: 20),),
+                Column(
+                  children: [
+                    ElevatedButton(
+               
+                      onPressed: () {
+                        // Navigate to manage place types
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  PlaceTypesManagementScreen()),
+                        );
+                      },
+                      child: const Text('Quản lý loại địa điểm',
+                          style: TextStyle(fontSize: 18)),
+                    ),
+                 const   SizedBox(height: 8.0),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute<void>(
+                            builder: (BuildContext context) {
+                              return MultiBlocProvider(
+                                providers: [
+                                  BlocProvider.value(
+                                    value: manager,
+                                  ),
+                                ],
+                                child: AddEditPlaceScreen(),
+                              );
+                            },
+                          ),
+                        );
+                      },
+                      child: const Text('Thêm mới địa điểm',
+                          style: TextStyle(fontSize: 18)),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -93,7 +131,7 @@ class _PlacesManagementScreenState extends State<PlacesManagementScreen> {
             Expanded(
               child: StreamBuilder<QuerySnapshot>(
                 stream: FirebaseFirestore.instance
-                    .collection('places')
+                    .collection('places_data')
                     .where('location', isEqualTo: _filterType)
                     .snapshots(),
                 builder: (context, snapshot) {
@@ -188,7 +226,7 @@ class _PlacesManagementScreenState extends State<PlacesManagementScreen> {
     );
   }
 
-// Show confirmation dialog before deleting
+  // Show confirmation dialog before deleting
   void _confirmDeletePlace(String placeId) {
     showDialog(
       context: context,
@@ -218,7 +256,7 @@ class _PlacesManagementScreenState extends State<PlacesManagementScreen> {
 
   // Delete place from Firestore
   void _deletePlace(String placeId) async {
-    await FirebaseFirestore.instance.collection('places').doc(placeId).delete();
+    await FirebaseFirestore.instance.collection('places_data').doc(placeId).delete();
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Đã xoá địa điểm thành công.')),
     );

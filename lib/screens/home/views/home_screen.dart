@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -12,6 +13,7 @@ import 'package:pizza_app/screens/home/views/list_place_screen.dart';
 import 'package:pizza_app/screens/home/views/places_managerment_screen.dart';
 import 'package:pizza_repository/pizza_repository.dart';
 import 'package:user_repository/user_repository.dart';
+import 'package:pizza_app/globals.dart' as globals;
 
 class HomeScreen extends StatefulWidget {
   final MyUser? userData;
@@ -56,161 +58,136 @@ class _HomeScreenState extends State<HomeScreen>
         ),
         body: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Visibility(
-                        visible: widget.userData?.name != 'admin',
-                        child: const Text(
-                          'CHÀO MỪNG QUÝ KHÁCH TỚI VỚI TRƯỜNG THCS HẢI XUÂN',
-                          style: TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-                      Text(
-                        'CHÀO ${widget.userData?.name == 'admin' ? 'ADMIN' : widget.userData?.name},'
-                            .toUpperCase(),
-                        style: const TextStyle(
-                          fontSize: 20,
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Visibility(
+                      visible: widget.userData?.name != 'admin',
+                      child: Text(
+                        'CHÀO MỪNG QUÝ KHÁCH TỚI VỚI ${globals.schoolName}',
+                        style: TextStyle(
+                          fontSize: 22,
                           fontWeight: FontWeight.bold,
                         ),
                         textAlign: TextAlign.center,
                       ),
-                      const SizedBox(height: 40),
-                      Text(
-                        widget.userData?.name == 'admin'
-                            ? 'CHỌN CHỨC NĂNG QUẢN LÝ DÀNH CHO ADMIN:'
-                            : 'VUI LÒNG LỰA CHỌN ĐỊA ĐIỂM MUỐN ĐẾN:',
-                        style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 20),
+                    Text(
+                      'CHÀO ${widget.userData?.name == 'admin' ? 'ADMIN' : widget.userData?.name},'
+                          .toUpperCase(),
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 40),
+                    Text(
+                      widget.userData?.name == 'admin'
+                          ? 'CHỌN CHỨC NĂNG QUẢN LÝ DÀNH CHO ADMIN:'
+                          : 'VUI LÒNG LỰA CHỌN ĐỊA ĐIỂM MUỐN ĐẾN:',
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 16.0),
+              widget.userData?.name == 'admin'
+                  ? _buildAdminOptions(context)
+                  : _buildUserOptions(context),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAdminOptions(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        _buildOptionContainer(
+          context,
+          title: 'Lịch sử đăng nhập'.toUpperCase(),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute<void>(
+                builder: (BuildContext context) {
+                  return MultiBlocProvider(
+                    providers: [
+                      BlocProvider.value(
+                        value: manager,
                       ),
                     ],
-                  ),
-                ),
-                const SizedBox(height: 16.0),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: widget.userData?.name == 'admin'
-                      ? [
-                          _buildOptionContainer(
-                            context,
-                            title: 'Lịch sử đăng nhập'.toUpperCase(),
-                            onTap: () {
-                              // Navigate to the login history screen
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute<void>(
-                                  builder: (BuildContext context) {
-                                    return MultiBlocProvider(
-                                      providers: [
-                                        BlocProvider.value(
-                                          value: manager,
-                                        ),
-                                      ],
-                                      child: PlacesScreen(),
-                                    );
-                                  },
-                                ),
-                              );
-                            },
-                          ),
-                          _buildOptionContainer(
-                            context,
-                            title: 'Quản lý thông tin chỉ đường'.toUpperCase(),
-                            onTap: () {
-                              // Navigate to the directions management screen
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute<void>(
-                                  builder: (BuildContext context) {
-                                    return MultiBlocProvider(
-                                      providers: [
-                                        BlocProvider.value(
-                                          value: manager,
-                                        ),
-                                      ],
-                                      child: PlacesManagementScreen(),
-                                    );
-                                  },
-                                ),
-                              );
-                            },
-                          ),
-                        ]
-                      : [
-                          _buildOptionContainer(
-                            context,
-                            title:
-                                'Khu vực học tập\ncủa học sinh'.toUpperCase(),
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute<void>(
-                                  builder: (BuildContext context) {
-                                    return MultiBlocProvider(
-                                      providers: [
-                                        BlocProvider.value(
-                                          value: manager,
-                                        ),
-                                        BlocProvider(
-                                          create: (context) =>
-                                              GetPizzaBloc(FirebasePizzaRepo())
-                                                ..add(GetPizza()),
-                                        ),
-                                      ],
-                                      child: const ListPlaceScreen(
-                                        placeType: 'class',
-                                      ),
-                                    );
-                                  },
-                                ),
-                              );
-                            },
-                          ),
-                          _buildOptionContainer(
-                            context,
-                            title: 'Khu vực làm việc\ncủa nhà trường'
-                                .toUpperCase(),
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute<void>(
-                                  builder: (BuildContext context) {
-                                    return MultiBlocProvider(
-                                      providers: [
-                                        BlocProvider.value(
-                                          value: manager,
-                                        ),
-                                        BlocProvider(
-                                          create: (context) =>
-                                              GetPizzaBloc(FirebasePizzaRepo())
-                                                ..add(GetPizza()),
-                                        ),
-                                      ],
-                                      child: const ListPlaceScreen(
-                                        placeType: 'work',
-                                      ),
-                                    );
-                                  },
-                                ),
-                              );
-                            },
-                          ),
-                        ],
-                ),
-              ],
+                    child: PlacesScreen(),
+                  );
+                },
+              ),
+            );
+          },
+        ),
+        _buildOptionContainer(
+          context,
+          title: 'Quản lý địa điểm'.toUpperCase(),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute<void>(
+                builder: (BuildContext context) {
+                  return MultiBlocProvider(
+                    providers: [
+                      BlocProvider.value(
+                        value: manager,
+                      ),
+                    ],
+                    child: PlacesManagementScreen(),
+                  );
+                },
+              ),
+            );
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildOptionContainer(BuildContext context,
+      {required String title, required VoidCallback onTap}) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 30),
+        margin: const EdgeInsets.symmetric(horizontal: 8),
+        decoration: BoxDecoration(
+          color: Colors.blueAccent, // Màu nền
+          borderRadius: BorderRadius.circular(12.0), // Góc bo tròn
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.2), // Bóng mờ
+              offset: const Offset(0, 4),
+              blurRadius: 6,
+            ),
+          ],
+        ),
+        child: Center(
+          child: Text(
+            title,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              fontSize: 16.0,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
             ),
           ),
         ),
@@ -218,40 +195,64 @@ class _HomeScreenState extends State<HomeScreen>
     );
   }
 
-  Widget _buildOptionContainer(BuildContext context,
-      {required String title, required VoidCallback onTap}) {
-    return Flexible(
-      child: GestureDetector(
-        onTap: onTap,
-        child: Container(
-          height: 150,
-          padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 30),
-          margin: const EdgeInsets.symmetric(horizontal: 8),
-          decoration: BoxDecoration(
-            color: const Color.fromARGB(255, 55, 190, 252),
-            borderRadius: BorderRadius.circular(10),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.2),
-                spreadRadius: 2,
-                blurRadius: 8,
-                offset: const Offset(0, 4),
-              ),
-            ],
-          ),
-          child: Center(
-            child: Text(
-              title,
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
+  Widget _buildUserOptions(BuildContext context) {
+    return StreamBuilder<QuerySnapshot>(
+      stream: FirebaseFirestore.instance.collection('place_types').snapshots(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const CircularProgressIndicator();
+        }
+
+        if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+          return const Text(
+            'Không có dữ liệu khu vực!',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          );
+        }
+
+        final placeTypes = snapshot.data!.docs;
+
+        return Expanded(
+          child: GridView.builder(
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              mainAxisExtent: 100.0,
+              crossAxisSpacing: 16.0,
+              mainAxisSpacing: 16.0,
             ),
+            itemCount: placeTypes.length,
+            itemBuilder: (context, index) {
+              final name = placeTypes[index]['name'] as String;
+              return _buildOptionContainer(
+                context,
+                title: name.toUpperCase(),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute<void>(
+                      builder: (BuildContext context) {
+                        return MultiBlocProvider(
+                          providers: [
+                            BlocProvider.value(
+                              value: manager,
+                            ),
+                            BlocProvider(
+                              create: (context) =>
+                                  GetPizzaBloc(FirebasePizzaRepo())
+                                    ..add(GetPizza()),
+                            ),
+                          ],
+                          child: ListPlaceScreen(placeType: name),
+                        );
+                      },
+                    ),
+                  );
+                },
+              );
+            },
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

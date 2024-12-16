@@ -1,12 +1,14 @@
 import 'dart:ui';
 import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../blocs/authentication_bloc/authentication_bloc.dart';
 import '../blocs/sign_up_bloc/sign_up_bloc.dart';
 import '../blocs/sing_in_bloc/sign_in_bloc.dart';
 import 'sign_in_screen.dart';
-import 'sign_up_screen.dart';
+import 'package:pizza_app/globals.dart' as globals;
+
 
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({super.key});
@@ -21,8 +23,29 @@ class _WelcomeScreenState extends State<WelcomeScreen>
 
   @override
   void initState() {
-    tabController = TabController(initialIndex: 0, length: 1, vsync: this);
     super.initState();
+    tabController = TabController(initialIndex: 0, length: 1, vsync: this);
+    _fetchSchoolInfo();
+  }
+
+  Future<void> _fetchSchoolInfo() async {
+    try {
+      final snapshot = await FirebaseFirestore.instance
+          .collection('place_info')
+          .doc('basic_info')
+          .get();
+
+          if (snapshot.exists) {
+        setState(() {
+          globals.schoolName = snapshot.data()?['name'] ?? '';
+          globals.schoolCoverImage = snapshot.data()?['coverImage'] ?? '';
+        });
+      }
+      
+    } catch (e) {
+
+      print("Error fetching school info: $e");
+    }
   }
 
   @override
@@ -41,8 +64,10 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                   child: Container(
                     height: MediaQuery.of(context).size.width,
                     width: MediaQuery.of(context).size.width,
-                    decoration: BoxDecoration(
-                        shape: BoxShape.circle, color: Colors.green),
+                    decoration: const BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.green,
+                    ),
                   ),
                 ),
                 Align(
@@ -50,8 +75,10 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                   child: Container(
                     height: MediaQuery.of(context).size.width / 1.3,
                     width: MediaQuery.of(context).size.width / 1.3,
-                    decoration: BoxDecoration(
-                        shape: BoxShape.circle, color: Colors.yellow),
+                    decoration: const BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.yellow,
+                    ),
                   ),
                 ),
                 BackdropFilter(
@@ -66,14 +93,11 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                       Align(
                         alignment: Alignment.bottomCenter,
                         child: Container(
-                          width: MediaQuery.of(context).size.width *
-                              0.9, // Smaller width
-                          height: MediaQuery.of(context).size.width *
-                              0.2, // Smaller height
+                          width: MediaQuery.of(context).size.width * 0.9,
+                          height: MediaQuery.of(context).size.width * 0.2,
                           decoration: BoxDecoration(
                             color: Colors.white,
-                            borderRadius:
-                                BorderRadius.circular(20), // Circular shape
+                            borderRadius: BorderRadius.circular(20),
                             boxShadow: const [
                               BoxShadow(
                                 color: Colors.grey,
@@ -84,10 +108,12 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                           ),
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(20),
-                            child: Image.asset(
-                              'assets/haixuan.jpg',
-                              fit: BoxFit.cover,
-                            ),
+                            child: globals.schoolCoverImage.isNotEmpty
+                                ? Image.network(
+                                    globals.schoolCoverImage,
+                                    fit: BoxFit.cover,
+                                  )
+                                : const SizedBox(),
                           ),
                         ),
                       ),
@@ -103,76 +129,60 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                               Theme.of(context).colorScheme.onBackground,
                           tabs: [
                             Padding(
-                                padding: EdgeInsets.all(12.0),
-                                child: AnimatedTextKit(
-                                  animatedTexts: [
-                                    ColorizeAnimatedText(
-                                      'STEM - THCS HẢI XUÂN',
-                                      textAlign: TextAlign.center,
-                                      textStyle: const TextStyle(
-                                        fontSize: 40.0,
-                                        fontFamily: 'Horizon',
-                                        shadows: [
-                                          Shadow(
-                                            offset: Offset(4.0,
-                                                4.0), // Horizontal and vertical shadow offset
-                                            blurRadius: 10.0, // The blur effect
-                                            color:
-                                                Colors.black54, // Shadow color
-                                          ),
-                                          Shadow(
-                                            offset: Offset(-4.0,
-                                                -4.0), // Additional shadow for depth
-                                            blurRadius: 8.0,
-                                            color: Colors.black26,
-                                          ),
-                                        ],
-                                      ),
-                                      colors: [
-                                        Colors.white,
-                                        Colors.red,
-                                        Colors.yellow
+                              padding: const EdgeInsets.all(12.0),
+                              child: AnimatedTextKit(
+                                animatedTexts: [
+                                  ColorizeAnimatedText(
+                                    globals.schoolName,
+                                    textAlign: TextAlign.center,
+                                    textStyle: const TextStyle(
+                                      fontSize: 40.0,
+                                      fontFamily: 'Horizon',
+                                      shadows: [
+                                        Shadow(
+                                          offset: Offset(4.0, 4.0),
+                                          blurRadius: 10.0,
+                                          color: Colors.black54,
+                                        ),
+                                        Shadow(
+                                          offset: Offset(-4.0, -4.0),
+                                          blurRadius: 8.0,
+                                          color: Colors.black26,
+                                        ),
                                       ],
                                     ),
-                                  ],
-                                  totalRepeatCount: 4,
-                                  pause: const Duration(milliseconds: 500),
-                                  displayFullTextOnTap: true,
-                                  stopPauseOnTap: false,
-                                )),
-                            // Padding(
-                            //   padding: EdgeInsets.all(12.0),
-                            //   child: Text(
-                            //     'Sign Up',
-                            //     style: TextStyle(
-                            //       fontSize: 18,
-                            //     ),
-                            //   ),
-                            // ),
+                                    colors: [
+                                      Colors.white,
+                                      Colors.red,
+                                      Colors.yellow,
+                                    ],
+                                  ),
+                                ],
+                                totalRepeatCount: 4,
+                                pause: const Duration(milliseconds: 500),
+                                displayFullTextOnTap: true,
+                                stopPauseOnTap: false,
+                              ),
+                            ),
                           ],
                         ),
                       ),
                       Expanded(
-                          child: TabBarView(
-                        controller: tabController,
-                        children: [
-                          BlocProvider<SignInBloc>(
-                            create: (context) => SignInBloc(context
-                                .read<AuthenticationBloc>()
-                                .userRepository),
-                            child: Center(child: const SignInScreen()),
-                          ),
-                          // BlocProvider<SignUpBloc>(
-                          // 	create: (context) => SignUpBloc(
-                          // 		context.read<AuthenticationBloc>().userRepository
-                          // 	),
-                          // 	child: const SignUpScreen(),
-                          // ),
-                        ],
-                      ))
+                        child: TabBarView(
+                          controller: tabController,
+                          children: [
+                            BlocProvider<SignInBloc>(
+                              create: (context) => SignInBloc(context
+                                  .read<AuthenticationBloc>()
+                                  .userRepository),
+                              child: const SignInScreen(),
+                            ),
+                          ],
+                        ),
+                      )
                     ],
                   ),
-                )
+                ),
               ],
             ),
           ),

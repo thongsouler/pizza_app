@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pizza_app/blocs/authentication_bloc/authentication_bloc.dart';
 import 'package:pizza_app/screens/home/blocs/places/get_place_bloc.dart';
+import 'package:pizza_app/screens/home/views/attendance_view.dart';
 import 'package:pizza_app/screens/home/views/home_screen.dart';
 import 'package:pizza_app/screens/home/views/qr_code_scanner.dart';
 import 'package:pizza_repository/pizza_repository.dart';
@@ -85,61 +86,7 @@ class _SignInScreenState extends State<SignInScreen> {
             ),
           ),
           const SizedBox(height: 30),
-          SizedBox(
-            width: MediaQuery.of(context).size.width * 0.7,
-            height: 60,
-            child: TextButton(
-              onPressed: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Chức năng đang phát triển!')),
-                );
-
-                // globals.currentUser = MyUser(
-                //   userId: '88888',
-                //   name: 'admin',
-                //   idcode: '88888',
-                //   address: 'Hanoi',
-                // );
-                // context
-                //     .read<SignInBloc>()
-                //     .add(SignInRequired(globals.currentUser!));
-                // Navigator.push(
-                //   context,
-                //   MaterialPageRoute<void>(
-                //     builder: (BuildContext context) {
-                //       return MultiBlocProvider(
-                //         providers: [
-                //           BlocProvider.value(
-                //             value: manager,
-                //           ),
-                //           BlocProvider(
-                //             create: (context) =>
-                //                 GetPizzaBloc(FirebasePizzaRepo())
-                //                   ..add(GetPizza()),
-                //           ),
-                //         ],
-                //         child: const HomeScreen(),
-                //       );
-                //     },
-                //   ),
-                // );
-              },
-              style: TextButton.styleFrom(
-                elevation: 3.0,
-                shadowColor: Colors.black,
-                backgroundColor:
-                    const Color.fromARGB(255, 55, 190, 252).withOpacity(0.9),
-                foregroundColor: Colors.white,
-              ),
-              child: const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                child: Text(
-                  'Điểm danh',
-                  style: TextStyle(color: Colors.white, fontSize: 20),
-                ),
-              ),
-            ),
-          ),
+          const AttendanceButton(),
           const Spacer(),
           SizedBox(
             width: MediaQuery.of(context).size.width * 0.7,

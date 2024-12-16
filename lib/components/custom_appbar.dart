@@ -4,6 +4,7 @@ import 'package:pizza_app/app_view.dart';
 import 'package:pizza_app/screens/auth/blocs/sing_in_bloc/sign_in_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pizza_app/screens/auth/views/welcome_screen.dart';
+import 'package:pizza_app/globals.dart' as globals;
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final bool isPushLoginScreen;
@@ -17,21 +18,21 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       backgroundColor: const Color.fromARGB(255, 55, 190, 252),
       iconTheme: IconThemeData(color: Colors.white),
-      title: const Row(
+      title: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
+         const  Icon(
             Icons.school,
             size: 30,
           ),
-          Spacer(),
-          Text(
-            'THCS HẢI XUÂN',
-            style: TextStyle(
+         const  Spacer(),
+         Text(
+           globals.schoolName,
+            style:const TextStyle(
                 fontWeight: FontWeight.w900, fontSize: 24, color: Colors.white),
           ),
-          Spacer(),
+         const Spacer(),
         ],
       ),
       actions: [
