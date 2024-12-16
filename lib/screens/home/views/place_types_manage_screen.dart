@@ -17,12 +17,12 @@ class _PlaceTypesManagementScreenState
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(typeId == null ? 'Thêm Loại' : 'Sửa Loại'),
+        title: Text(typeId == null ? 'Thêm Khu vực' : 'Sửa Khu vực'),
         content: TextField(
           controller: _nameController,
           decoration: const InputDecoration(
-            labelText: 'Tên Loại',
-            hintText: 'Nhập tên loại địa điểm',
+            labelText: 'Tên Khu vực',
+            hintText: 'Nhập tên khu vực',
           ),
         ),
         actions: [
@@ -53,7 +53,7 @@ class _PlaceTypesManagementScreenState
         .collection('place_types')
         .add({'name': name});
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Đã thêm loại thành công.')),
+      const SnackBar(content: Text('Đã thêm khu vực thành công.')),
     );
   }
 
@@ -65,7 +65,7 @@ class _PlaceTypesManagementScreenState
         .doc(typeId)
         .update({'name': newName});
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Đã cập nhật loại thành công.')),
+      const SnackBar(content: Text('Đã cập nhật khu vực thành công.')),
     );
   }
 
@@ -76,7 +76,7 @@ class _PlaceTypesManagementScreenState
         .doc(typeId)
         .delete();
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Đã xoá loại thành công.')),
+      const SnackBar(content: Text('Đã xoá khu vực thành công.')),
     );
   }
 
@@ -87,7 +87,7 @@ class _PlaceTypesManagementScreenState
         iconTheme: IconThemeData(color: Colors.white),
         backgroundColor: const Color.fromARGB(255, 55, 190, 252),
         title: const Text(
-          'Quản lý loại địa điểm',
+          'Quản lý khu vực',
           style: TextStyle(
               fontWeight: FontWeight.w900, fontSize: 24, color: Colors.white),
         ),
@@ -150,7 +150,7 @@ class _PlaceTypesManagementScreenState
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Xác nhận xoá'),
-        content: const Text('Bạn có chắc chắn muốn xoá loại này không?'),
+        content: const Text('Bạn có chắc chắn muốn xoá khu vực này không?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),

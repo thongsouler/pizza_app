@@ -215,7 +215,7 @@ class _AddEditPlaceScreenState extends State<AddEditPlaceScreen> {
                             errorBuilder: (BuildContext context,
                                 Object exception, StackTrace? stackTrace) {
                               return Image.asset(
-                                'assets/haixuan.jpg',
+                                'assets/building.png',
                                 fit: BoxFit.fitHeight,
                               );
                             },

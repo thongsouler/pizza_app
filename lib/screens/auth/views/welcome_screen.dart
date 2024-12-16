@@ -37,7 +37,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
 
           if (snapshot.exists) {
         setState(() {
-          globals.schoolName = snapshot.data()?['name'] ?? '';
+          globals.schoolName = snapshot.data()?['name'] ?? 'Xin chào Quý khách';
           globals.schoolCoverImage = snapshot.data()?['coverImage'] ?? '';
         });
       }

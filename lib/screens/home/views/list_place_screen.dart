@@ -60,17 +60,11 @@ class _ListPlaceScreenState extends State<ListPlaceScreen> {
                         color: const Color.fromARGB(255, 55, 190, 252)),
                   ),
                   prefixIcon: const Icon(Icons.search),
-                  hintText:
-                      'Tìm kiếm ${widget.placeType == "class" ? "lớp học" : "nơi làm việc"}...',
+                  hintText: 'Tìm kiếm địa điểm...',
                   filled: true,
                   fillColor: Colors.white,
                 ),
               ),
-              const SizedBox(height: 16.0),
-              Visibility(
-                  visible: widget.placeType == 'class',
-                  child: _buildUnitSelection()),
-
               const SizedBox(height: 16.0),
 
               // Pizza List for the selected place type
@@ -80,51 +74,6 @@ class _ListPlaceScreenState extends State<ListPlaceScreen> {
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildUnitSelection() {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: units.map((unit) {
-          return Row(
-            children: [
-              GestureDetector(
-                onTap: () {
-                  setState(() {
-                    selectedUnit = unit == 'Tất cả' ? null : unit;
-                  });
-                },
-                child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                  decoration: BoxDecoration(
-                    color: selectedUnit == unit
-                        ? const Color.fromARGB(255, 55, 190, 252)
-                        : Colors.white,
-                    border: Border.all(
-                        color: const Color.fromARGB(255, 55, 190, 252)),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Text(
-                    unit == "Tất cả" ? "Tất cả" : "Khối $unit",
-                    style: TextStyle(
-                        color:
-                            selectedUnit == unit ? Colors.white : Colors.black,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20),
-                  ),
-                ),
-              ),
-              SizedBox(
-                width: 8.0,
-              )
-            ],
-          );
-        }).toList(),
       ),
     );
   }
@@ -141,6 +90,12 @@ class _ListPlaceScreenState extends State<ListPlaceScreen> {
                       .contains(removeDiacritics(searchQuery.toLowerCase())) &&
                   (selectedUnit == null || pizza.unit == selectedUnit);
             }).toList();
+
+            filteredPizzas.sort((a, b) {
+              return (a.name ?? '')
+                  .toLowerCase()
+                  .compareTo((b.name ?? '').toLowerCase());
+            });
 
             return GridView.builder(
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(

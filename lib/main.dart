@@ -12,6 +12,6 @@ void main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   Bloc.observer = SimpleBlocObserver();
   runApp(
-    RestartWidget(child: MyApp(FirebaseUserRepo())),
+     RestartWidget(child: MyApp(FirebaseUserRepo())),
   );
 }

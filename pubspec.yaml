@@ -35,6 +35,7 @@ dependencies:
   image:
   permission_handler:
   bluetooth_print:
+  text_mask:
 
   user_repository:
     path: packages/user_repository

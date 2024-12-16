@@ -6,7 +6,7 @@ import 'package:pizza_app/screens/auth/blocs/sing_in_bloc/sign_in_bloc.dart';
 import 'package:pizza_app/screens/home/blocs/places/get_place_bloc.dart';
 import 'package:pizza_repository/pizza_repository.dart';
 import 'package:user_repository/user_repository.dart';
-
+import 'package:text_mask/text_mask.dart';
 import 'home_screen.dart';
 
 class AttendanceButton extends StatefulWidget {
@@ -18,8 +18,8 @@ class AttendanceButton extends StatefulWidget {
 
 class _AttendanceButtonState extends State<AttendanceButton> {
   final TextEditingController nameController = TextEditingController();
-  final TextEditingController idController = TextEditingController();
   final TextEditingController addressController = TextEditingController();
+  final TextEditingController bornController = TextEditingController();
   DateTime? selectedDate;
   @override
   Widget build(BuildContext context) {
@@ -51,115 +51,101 @@ class _AttendanceButtonState extends State<AttendanceButton> {
   void _showAttendanceDialog(BuildContext context) {
     showDialog(
       context: context,
-      builder: (BuildContext context) {
+      builder: (BuildContext tcontext) {
         return StatefulBuilder(
-          builder: (context, setState) {
-            return AlertDialog(
-              title: const Text('Thông tin điểm danh'),
-              content: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    TextField(
-                      controller: nameController,
-                      decoration: const InputDecoration(
-                        labelText: 'Họ và tên',
-                        border: OutlineInputBorder(),
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    TextField(
-                      controller: idController,
-                      decoration: const InputDecoration(
-                        labelText: 'Số CCCD',
-                        border: OutlineInputBorder(),
-                      ),
-                      keyboardType: TextInputType.number,
-                    ),
-                    const SizedBox(height: 10),
-                    TextField(
-                      controller: addressController,
-                      decoration: const InputDecoration(
-                        labelText: 'Địa chỉ',
-                        border: OutlineInputBorder(),
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text(
-                          'Ngày sinh:',
-                          style: TextStyle(fontSize: 16),
+          builder: (tcontext, setState) {
+            return Dialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxHeight: MediaQuery.of(context).size.height * 0.9,
+                  maxWidth: MediaQuery.of(context).size.width * 0.9,
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Thông tin cá nhân',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
                         ),
-                        TextButton(
-                          onPressed: () async {
-                            final DateTime? picked = await showDatePicker(
-                              context: context,
-                              initialDate: DateTime.now(),
-                              firstDate: DateTime(1930),
-                              lastDate: DateTime.now(),
-                              builder: (context, child) {
-                                return Theme(
-                                  data: Theme.of(context).copyWith(
-                                    primaryColor: Colors.blue,
-                                    colorScheme: const ColorScheme.light(
-                                      primary: Colors.blue,
-                                    ),
-                                    buttonTheme: const ButtonThemeData(
-                                      textTheme: ButtonTextTheme.primary,
-                                    ),
-                                  ),
-                                  child: child!,
-                                );
-                              },
-                            );
-                            if (picked != null) {
-                              setState(() {
-                                selectedDate = picked;
-                              });
-                            }
-                          },
-                          child: Text(
-                            selectedDate == null
-                                ? 'Chọn ngày'
-                                : DateFormat('dd/MM/yyyy')
-                                    .format(selectedDate!),
-                            style: const TextStyle(fontSize: 16),
+                      ),
+                      const SizedBox(height: 16),
+                      Flexible(
+                        child: SingleChildScrollView(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              TextField(
+                                controller: nameController,
+                                decoration: const InputDecoration(
+                                  labelText: 'Họ và tên',
+                                  border: OutlineInputBorder(),
+                                ),
+                              ),
+                              const SizedBox(height: 10),
+                              TextField(
+                                controller: addressController,
+                                decoration: const InputDecoration(
+                                  labelText: 'Địa chỉ',
+                                  border: OutlineInputBorder(),
+                                ),
+                              ),
+                              const SizedBox(height: 10),
+                              TextField(
+                                controller: bornController,
+                                inputFormatters: [
+                                  TextMask(pallet: '##/##/####')
+                                ],
+                                decoration: const InputDecoration(
+                                  labelText: 'Ngày sinh',
+                                  hintText: 'ngày/tháng/năm',
+                                  border: OutlineInputBorder(),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                      ],
-                    ),
-                  ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(tcontext).pop();
+                            },
+                            child: const Text('Hủy'),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              final String name = nameController.text;
+
+                              if (name.isEmpty || selectedDate == null) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content:
+                                        Text('Vui lòng nhập đầy đủ thông tin!'),
+                                  ),
+                                );
+                              } else {
+                                Navigator.of(tcontext).pop();
+                                _processLogin();
+                              }
+                            },
+                            child: const Text('Xác nhận'),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text('Hủy'),
-                ),
-                TextButton(
-                  onPressed: () {
-                    // Handle submit logic here
-                    final String name = nameController.text;
-                    final String id = idController.text;
-
-                    if (name.isEmpty || id.isEmpty || selectedDate == null) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Vui lòng nhập đầy đủ thông tin!'),
-                        ),
-                      );
-                    } else {
-                      Navigator.of(context).pop();
-                      _processLogin();
-                    }
-                  },
-                  child: const Text('Xác nhận'),
-                ),
-              ],
             );
           },
         );
@@ -169,7 +155,7 @@ class _AttendanceButtonState extends State<AttendanceButton> {
 
   Future<void> _processLogin() async {
     var user = MyUser(
-      idcode: idController.text,
+      idcode: '0',
       name: nameController.text,
       address: addressController.text,
     );

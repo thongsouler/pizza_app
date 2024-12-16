@@ -105,7 +105,7 @@ class _PlacesManagementScreenState extends State<PlacesManagementScreen> {
                                   PlaceTypesManagementScreen()),
                         );
                       },
-                      child: const Text('Quản lý loại địa điểm',
+                      child: const Text('Quản lý Khu vực',
                           style: TextStyle(fontSize: 18)),
                     ),
                     const SizedBox(height: 8.0),
