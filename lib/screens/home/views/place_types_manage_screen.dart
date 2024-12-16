@@ -22,7 +22,7 @@ class _PlaceTypesManagementScreenState
           controller: _nameController,
           decoration: const InputDecoration(
             labelText: 'Tên Loại',
-            hintText: 'Nhập tên loại (vd: class, work)',
+            hintText: 'Nhập tên loại địa điểm',
           ),
         ),
         actions: [
@@ -84,6 +84,7 @@ class _PlaceTypesManagementScreenState
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        iconTheme: IconThemeData(color: Colors.white),
         backgroundColor: const Color.fromARGB(255, 55, 190, 252),
         title: const Text(
           'Quản lý loại địa điểm',

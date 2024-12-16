@@ -64,19 +64,27 @@ class _PlacesManagementScreenState extends State<PlacesManagementScreen> {
 
                     return DropdownButton<String>(
                       value: _filterType,
-                      items: placeTypes.map((type) {
-                        final String typeName = type['name'];
-                        return DropdownMenuItem(
-                          value: typeName,
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              type['name'] ?? '',
-                              style: const TextStyle(fontSize: 18),
-                            ),
-                          ),
-                        );
-                      }).toList(),
+                      items: placeTypes
+                          .map((type) {
+                            // Kiểm tra xem trường "name" có tồn tại trong tài liệu hay không
+                            final data = type.data() as Map<String, dynamic>;
+                            if (data.containsKey('name')) {
+                              final String typeName = type['name'];
+                              return DropdownMenuItem(
+                                value: typeName,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text(
+                                    typeName,
+                                    style: const TextStyle(fontSize: 18),
+                                  ),
+                                ),
+                              );
+                            }
+                            return null; // Bỏ qua nếu không có trường "name"
+                          })
+                          .whereType<DropdownMenuItem<String>>()
+                          .toList(), // Lọc các phần tử null
                       onChanged: (value) {
                         setState(() {
                           _filterType = value;
@@ -88,7 +96,6 @@ class _PlacesManagementScreenState extends State<PlacesManagementScreen> {
                 Column(
                   children: [
                     ElevatedButton(
-               
                       onPressed: () {
                         // Navigate to manage place types
                         Navigator.push(
@@ -101,7 +108,7 @@ class _PlacesManagementScreenState extends State<PlacesManagementScreen> {
                       child: const Text('Quản lý loại địa điểm',
                           style: TextStyle(fontSize: 18)),
                     ),
-                 const   SizedBox(height: 8.0),
+                    const SizedBox(height: 8.0),
                     ElevatedButton(
                       onPressed: () {
                         Navigator.push(
@@ -256,7 +263,10 @@ class _PlacesManagementScreenState extends State<PlacesManagementScreen> {
 
   // Delete place from Firestore
   void _deletePlace(String placeId) async {
-    await FirebaseFirestore.instance.collection('places_data').doc(placeId).delete();
+    await FirebaseFirestore.instance
+        .collection('places_data')
+        .doc(placeId)
+        .delete();
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Đã xoá địa điểm thành công.')),
     );

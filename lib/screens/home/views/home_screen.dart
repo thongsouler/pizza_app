@@ -10,6 +10,7 @@ import 'package:pizza_app/screens/home/blocs/places/get_place_bloc.dart';
 import 'package:pizza_app/screens/home/views/details_screen.dart';
 import 'package:pizza_app/screens/home/views/history_places_screen.dart';
 import 'package:pizza_app/screens/home/views/list_place_screen.dart';
+import 'package:pizza_app/screens/home/views/place_basic_edit_screen.dart';
 import 'package:pizza_app/screens/home/views/places_managerment_screen.dart';
 import 'package:pizza_repository/pizza_repository.dart';
 import 'package:user_repository/user_repository.dart';
@@ -56,56 +57,58 @@ class _HomeScreenState extends State<HomeScreen>
           manager: manager,
           isPushLoginScreen: false,
         ),
-        body: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Visibility(
-                      visible: widget.userData?.name != 'admin',
-                      child: Text(
-                        'CHÀO MỪNG QUÝ KHÁCH TỚI VỚI ${globals.schoolName}',
-                        style: TextStyle(
-                          fontSize: 22,
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Visibility(
+                        visible: widget.userData?.name != 'admin',
+                        child: Text(
+                          'CHÀO MỪNG QUÝ KHÁCH TỚI VỚI ${globals.schoolName}',
+                          style: TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      Text(
+                        'CHÀO ${widget.userData?.name == 'admin' ? 'ADMIN' : widget.userData?.name},'
+                            .toUpperCase(),
+                        style: const TextStyle(
+                          fontSize: 20,
                           fontWeight: FontWeight.bold,
                         ),
                         textAlign: TextAlign.center,
                       ),
-                    ),
-                    const SizedBox(height: 20),
-                    Text(
-                      'CHÀO ${widget.userData?.name == 'admin' ? 'ADMIN' : widget.userData?.name},'
-                          .toUpperCase(),
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
+                      const SizedBox(height: 40),
+                      Text(
+                        widget.userData?.name == 'admin'
+                            ? 'CHỌN CHỨC NĂNG QUẢN LÝ DÀNH CHO ADMIN:'
+                            : 'VUI LÒNG LỰA CHỌN ĐỊA ĐIỂM MUỐN ĐẾN:',
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        textAlign: TextAlign.center,
                       ),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 40),
-                    Text(
-                      widget.userData?.name == 'admin'
-                          ? 'CHỌN CHỨC NĂNG QUẢN LÝ DÀNH CHO ADMIN:'
-                          : 'VUI LÒNG LỰA CHỌN ĐỊA ĐIỂM MUỐN ĐẾN:',
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-              const SizedBox(height: 16.0),
-              widget.userData?.name == 'admin'
-                  ? _buildAdminOptions(context)
-                  : _buildUserOptions(context),
-            ],
+                const SizedBox(height: 16.0),
+                widget.userData?.name == 'admin'
+                    ? _buildAdminOptions(context)
+                    : _buildUserOptions(context),
+              ],
+            ),
           ),
         ),
       ),
@@ -113,50 +116,88 @@ class _HomeScreenState extends State<HomeScreen>
   }
 
   Widget _buildAdminOptions(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    return Column(
       children: [
-        _buildOptionContainer(
-          context,
-          title: 'Lịch sử đăng nhập'.toUpperCase(),
-          onTap: () {
-            Navigator.push(
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            _buildOptionContainer(
               context,
-              MaterialPageRoute<void>(
-                builder: (BuildContext context) {
-                  return MultiBlocProvider(
-                    providers: [
-                      BlocProvider.value(
-                        value: manager,
-                      ),
-                    ],
-                    child: PlacesScreen(),
-                  );
-                },
-              ),
-            );
-          },
+              title: 'Lịch sử đăng nhập'.toUpperCase(),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute<void>(
+                    builder: (BuildContext context) {
+                      return MultiBlocProvider(
+                        providers: [
+                          BlocProvider.value(
+                            value: manager,
+                          ),
+                        ],
+                        child: PlacesScreen(),
+                      );
+                    },
+                  ),
+                );
+              },
+            ),
+            _buildOptionContainer(
+              context,
+              title: 'Quản lý địa điểm'.toUpperCase(),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute<void>(
+                    builder: (BuildContext context) {
+                      return MultiBlocProvider(
+                        providers: [
+                          BlocProvider.value(
+                            value: manager,
+                          ),
+                        ],
+                        child: PlacesManagementScreen(),
+                      );
+                    },
+                  ),
+                );
+              },
+            ),
+          ],
         ),
-        _buildOptionContainer(
-          context,
-          title: 'Quản lý địa điểm'.toUpperCase(),
-          onTap: () {
-            Navigator.push(
+        SizedBox(
+          height: 16.0,
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            _buildOptionContainer(
               context,
-              MaterialPageRoute<void>(
-                builder: (BuildContext context) {
-                  return MultiBlocProvider(
-                    providers: [
-                      BlocProvider.value(
-                        value: manager,
-                      ),
-                    ],
-                    child: PlacesManagementScreen(),
-                  );
-                },
-              ),
-            );
-          },
+              title: 'Quản lý tên/ảnh bìa'.toUpperCase(),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute<void>(
+                    builder: (BuildContext context) {
+                      return MultiBlocProvider(
+                        providers: [
+                          BlocProvider.value(
+                            value: manager,
+                          ),
+                        ],
+                        child: SchoolInfoScreen(),
+                      );
+                    },
+                  ),
+                );
+              },
+            ),
+            _buildOptionContainer(
+              context,
+              title: '',
+              onTap: () {},
+            ),
+          ],
         ),
       ],
     );
@@ -167,18 +208,22 @@ class _HomeScreenState extends State<HomeScreen>
     return GestureDetector(
       onTap: onTap,
       child: Container(
+        width: MediaQuery.of(context).size.width / 2.5,
         padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 30),
         margin: const EdgeInsets.symmetric(horizontal: 8),
         decoration: BoxDecoration(
-          color: Colors.blueAccent, // Màu nền
+          color:
+              title.isEmpty ? Colors.transparent : Colors.blueAccent, // Màu nền
           borderRadius: BorderRadius.circular(12.0), // Góc bo tròn
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.2), // Bóng mờ
-              offset: const Offset(0, 4),
-              blurRadius: 6,
-            ),
-          ],
+          boxShadow: title.isEmpty
+              ? null
+              : [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.2), // Bóng mờ
+                    offset: const Offset(0, 4),
+                    blurRadius: 6,
+                  ),
+                ],
         ),
         child: Center(
           child: Text(
