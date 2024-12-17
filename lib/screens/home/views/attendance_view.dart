@@ -20,7 +20,6 @@ class _AttendanceButtonState extends State<AttendanceButton> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController addressController = TextEditingController();
   final TextEditingController bornController = TextEditingController();
-  DateTime? selectedDate;
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -126,7 +125,9 @@ class _AttendanceButtonState extends State<AttendanceButton> {
                             onPressed: () {
                               final String name = nameController.text;
 
-                              if (name.isEmpty || selectedDate == null) {
+                              if (name.isEmpty ||
+                                  addressController.text.isEmpty ||
+                                  bornController.text.isEmpty) {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
                                     content:

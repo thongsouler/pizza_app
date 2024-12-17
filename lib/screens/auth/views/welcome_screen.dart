@@ -9,7 +9,6 @@ import '../blocs/sing_in_bloc/sign_in_bloc.dart';
 import 'sign_in_screen.dart';
 import 'package:pizza_app/globals.dart' as globals;
 
-
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({super.key});
 
@@ -35,15 +34,13 @@ class _WelcomeScreenState extends State<WelcomeScreen>
           .doc('basic_info')
           .get();
 
-          if (snapshot.exists) {
+      if (snapshot.exists) {
         setState(() {
           globals.schoolName = snapshot.data()?['name'] ?? 'Xin chào Quý khách';
           globals.schoolCoverImage = snapshot.data()?['coverImage'] ?? '';
         });
       }
-      
     } catch (e) {
-
       print("Error fetching school info: $e");
     }
   }
@@ -94,7 +91,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                         alignment: Alignment.bottomCenter,
                         child: Container(
                           width: MediaQuery.of(context).size.width * 0.9,
-                          height: MediaQuery.of(context).size.width * 0.2,
+                          height: MediaQuery.of(context).size.width * 0.35,
                           decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(20),

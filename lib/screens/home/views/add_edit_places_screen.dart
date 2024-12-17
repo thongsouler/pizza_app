@@ -119,7 +119,7 @@ class _AddEditPlaceScreenState extends State<AddEditPlaceScreen> {
         iconTheme: IconThemeData(color: Colors.white),
         backgroundColor: const Color.fromARGB(255, 55, 190, 252),
         title: Text(
-          widget.placeId != null ? 'Chỉnh sửa địa điểm' : 'Thêm mới địa điểm',
+          widget.placeId != null ? 'Sửa địa điểm' : 'Thêm địa điểm',
           style: TextStyle(
               fontWeight: FontWeight.w900, fontSize: 24, color: Colors.white),
         ),

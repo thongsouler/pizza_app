@@ -45,6 +45,7 @@ class _PlacesManagementScreenState extends State<PlacesManagementScreen> {
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Dropdown for filtering places by type
                 StreamBuilder<QuerySnapshot>(
@@ -105,8 +106,11 @@ class _PlacesManagementScreenState extends State<PlacesManagementScreen> {
                                   PlaceTypesManagementScreen()),
                         );
                       },
-                      child: const Text('Quản lý Khu vực',
-                          style: TextStyle(fontSize: 18)),
+                      child: SizedBox(
+                        width: 120,
+                        child: const Text('Quản lý Khu vực',
+                            style: TextStyle(fontSize: 18)),
+                      ),
                     ),
                     const SizedBox(height: 8.0),
                     ElevatedButton(
@@ -127,8 +131,11 @@ class _PlacesManagementScreenState extends State<PlacesManagementScreen> {
                           ),
                         );
                       },
-                      child: const Text('Thêm mới địa điểm',
-                          style: TextStyle(fontSize: 18)),
+                      child: SizedBox(
+                        width: 120,
+                        child: const Text('Thêm địa điểm',
+                            style: TextStyle(fontSize: 18)),
+                      ),
                     ),
                   ],
                 ),

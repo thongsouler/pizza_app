@@ -209,11 +209,13 @@ class _HomeScreenState extends State<HomeScreen>
       onTap: onTap,
       child: Container(
         width: MediaQuery.of(context).size.width / 2.5,
+        height: 120,
         padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 30),
         margin: const EdgeInsets.symmetric(horizontal: 8),
         decoration: BoxDecoration(
-          color:
-              title.isEmpty ? Colors.transparent : Colors.blueAccent, // Màu nền
+          color: title.isEmpty
+              ? Colors.transparent
+              : const Color.fromARGB(255, 55, 190, 252), // Màu nền
           borderRadius: BorderRadius.circular(12.0), // Góc bo tròn
           boxShadow: title.isEmpty
               ? null
