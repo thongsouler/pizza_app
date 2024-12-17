@@ -13,14 +13,8 @@ class MyApp extends StatelessWidget {
     return  MaterialApp(
        debugShowCheckedModeBanner: false,
       theme: ThemeData(primarySwatch: Colors.blue),
-      supportedLocales: const [
-        Locale('en', 'US'),
-        Locale('vi', 'VN'), // Thêm ngôn ngữ tiếng Việt
-      ],
-      localizationsDelegates: const [
-        DefaultMaterialLocalizations.delegate,
-        DefaultWidgetsLocalizations.delegate,
-      ],
+    
+      
       home: RepositoryProvider<AuthenticationBloc>(
         create: (context) => AuthenticationBloc(
           userRepository: userRepository
