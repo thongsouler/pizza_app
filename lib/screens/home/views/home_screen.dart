@@ -71,7 +71,7 @@ class _HomeScreenState extends State<HomeScreen>
                       Visibility(
                         visible: widget.userData?.name != 'admin',
                         child: Text(
-                          'CHÀO MỪNG QUÝ KHÁCH TỚI VỚI ${globals.schoolName}',
+                          'CHÀO MỪNG QUÝ KHÁCH TỚI VỚI ${globals.schoolName.toUpperCase()}',
                           style: TextStyle(
                             fontSize: 22,
                             fontWeight: FontWeight.bold,

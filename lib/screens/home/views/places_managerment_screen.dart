@@ -48,66 +48,75 @@ class _PlacesManagementScreenState extends State<PlacesManagementScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Dropdown for filtering places by type
-                StreamBuilder<QuerySnapshot>(
-                  stream: FirebaseFirestore.instance
-                      .collection('place_types')
-                      .snapshots(),
-                  builder: (context, snapshot) {
-                    if (!snapshot.hasData) {
-                      return const CircularProgressIndicator();
-                    }
+                Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8.0),
+                    color: Colors.grey[400],
+                  ),
+                  child: StreamBuilder<QuerySnapshot>(
+                    stream: FirebaseFirestore.instance
+                        .collection('place_types')
+                        .snapshots(),
+                    builder: (context, snapshot) {
+                      if (!snapshot.hasData) {
+                        return const CircularProgressIndicator();
+                      }
 
-                    final placeTypes = snapshot.data!.docs;
+                      final placeTypes = snapshot.data!.docs;
 
-                    if (placeTypes.isEmpty) {
-                      return const Text('Không có loại địa điểm.');
-                    }
+                      if (placeTypes.isEmpty) {
+                        return const Text(
+                          'Không có loại địa điểm.',
+                          style: TextStyle(color: Colors.white),
+                        );
+                      }
 
-                    // Tạo danh sách các DropdownMenuItem
-                    final dropdownItems = [
-                      const DropdownMenuItem<String>(
-                        value: null, // Giá trị null cho "Tất cả địa điểm"
-                        child: Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Text(
-                            'Tất cả địa điểm',
-                            style: TextStyle(fontSize: 18),
+                      // Tạo danh sách các DropdownMenuItem
+                      final dropdownItems = [
+                        const DropdownMenuItem<String>(
+                          value: null, // Giá trị null cho "Tất cả địa điểm"
+                          child: Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Text(
+                              'Tất cả địa điểm',
+                              style: TextStyle(fontSize: 18),
+                            ),
                           ),
                         ),
-                      ),
-                      ...placeTypes
-                          .map((type) {
-                            final data = type.data() as Map<String, dynamic>;
-                            if (data.containsKey('name')) {
-                              final String typeName = type['name'];
-                              return DropdownMenuItem(
-                                value: typeName,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(
-                                    typeName,
-                                    style: const TextStyle(fontSize: 18),
+                        ...placeTypes
+                            .map((type) {
+                              final data = type.data() as Map<String, dynamic>;
+                              if (data.containsKey('name')) {
+                                final String typeName = type['name'];
+                                return DropdownMenuItem(
+                                  value: typeName,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text(
+                                      typeName,
+                                      style: const TextStyle(fontSize: 18),
+                                    ),
                                   ),
-                                ),
-                              );
-                            }
-                            return null; // Bỏ qua nếu không có trường "name"
-                          })
-                          .whereType<DropdownMenuItem<String>>()
-                          .toList(),
-                    ];
+                                );
+                              }
+                              return null; // Bỏ qua nếu không có trường "name"
+                            })
+                            .whereType<DropdownMenuItem<String>>()
+                            .toList(),
+                      ];
 
-                    return DropdownButton<String>(
-                      value:
-                          _filterType, // Nếu _filterType là null, hiển thị "Tất cả địa điểm"
-                      items: dropdownItems,
-                      onChanged: (value) {
-                        setState(() {
-                          _filterType = value;
-                        });
-                      },
-                    );
-                  },
+                      return DropdownButton<String>(
+                        value:
+                            _filterType, // Nếu _filterType là null, hiển thị "Tất cả địa điểm"
+                        items: dropdownItems,
+                        onChanged: (value) {
+                          setState(() {
+                            _filterType = value;
+                          });
+                        },
+                      );
+                    },
+                  ),
                 ),
 
                 Column(
@@ -170,7 +179,6 @@ class _PlacesManagementScreenState extends State<PlacesManagementScreen> {
                 stream: FirebaseFirestore.instance
                     .collection('places_data')
                     .where('location', isEqualTo: _filterType)
-                    .orderBy('name')
                     .snapshots(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
@@ -180,7 +188,19 @@ class _PlacesManagementScreenState extends State<PlacesManagementScreen> {
                     return const Center(child: Text('Không có dữ liệu.'));
                   }
 
+                  // Lấy danh sách tài liệu
                   final places = snapshot.data!.docs;
+
+                  // Sắp xếp danh sách theo thứ tự bảng chữ cái dựa trên trường "name"
+                  places.sort((a, b) {
+                    final nameA = (a.data() as Map<String, dynamic>)['name']
+                            ?.toString() ??
+                        '';
+                    final nameB = (b.data() as Map<String, dynamic>)['name']
+                            ?.toString() ??
+                        '';
+                    return nameA.compareTo(nameB);
+                  });
 
                   return ListView.builder(
                     itemCount: places.length,

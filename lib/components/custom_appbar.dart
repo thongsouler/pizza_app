@@ -28,7 +28,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           ),
          const  Spacer(),
          Text(
-           globals.schoolName,
+           globals.schoolName.toUpperCase(),
             style:const TextStyle(
                 fontWeight: FontWeight.w900, fontSize: 24, color: Colors.white),
           ),

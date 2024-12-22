@@ -130,7 +130,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                               child: AnimatedTextKit(
                                 animatedTexts: [
                                   ColorizeAnimatedText(
-                                    globals.schoolName,
+                                    globals.schoolName.toUpperCase(),
                                     textAlign: TextAlign.center,
                                     textStyle: const TextStyle(
                                       fontSize: 40.0,

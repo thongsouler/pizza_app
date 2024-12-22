@@ -15,7 +15,7 @@ class MyAppView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        title: globals.schoolName,
+        title: globals.schoolName.toUpperCase(),
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
             colorScheme: ColorScheme.light(
