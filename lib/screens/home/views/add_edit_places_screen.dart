@@ -20,10 +20,10 @@ class _AddEditPlaceScreenState extends State<AddEditPlaceScreen> {
   final TextEditingController _floorController = TextEditingController();
   final TextEditingController _roomController = TextEditingController();
   final TextEditingController _rowController = TextEditingController();
-  String? _imageUrl;
+  List<String> _imageUrls = []; // Danh sách đường dẫn ảnh
   final _uuid = Uuid();
 
-  // Selected place type
+// Selected place type
   String? _selectedPlaceType; // Default is null
   List<String> _placeTypes = []; // Store place types from Firestore
 
@@ -50,44 +50,56 @@ class _AddEditPlaceScreenState extends State<AddEditPlaceScreen> {
   }
 
   void _loadPlaceData() async {
-    final doc = await FirebaseFirestore.instance
-        .collection('places_data')
-        .doc(widget.placeId)
-        .get();
-    final data = doc.data();
-    if (data != null) {
-      _nameController.text = data['name'] ?? '';
-      _floorController.text = data['floor'] ?? '';
-      _roomController.text = data['room'] ?? '';
-      _imageUrl = data['picture'];
-      _selectedPlaceType = data['location'] ?? 'class';
-      _rowController.text = data['row'] ?? 'A';
-      setState(() {});
+    try {
+      final doc = await FirebaseFirestore.instance
+          .collection('places_data')
+          .doc(widget.placeId)
+          .get();
+      final data = doc.data();
+      if (data != null) {
+        setState(() {
+          _nameController.text = data['name'] ?? '';
+          _floorController.text = data['floor'] ?? '';
+          _roomController.text = data['room'] ?? '';
+          _imageUrls = (data['pictures'] as String?)?.split(',') ?? [];
+          _selectedPlaceType = data['location'] ?? null;
+          _rowController.text = data['row'] ?? 'A';
+        });
+      }
+    } catch (e) {
+      print('Error loading place data: $e');
     }
   }
 
   Future<void> _pickImage() async {
-    final pickedFile =
-        await ImagePicker().pickImage(source: ImageSource.gallery);
-    if (pickedFile != null) {
-      File file = File(pickedFile.path);
-      final storageRef = FirebaseStorage.instance
-          .ref()
-          .child('places/${widget.placeId ?? DateTime.now().toString()}.jpg');
-      final uploadTask = await storageRef.putFile(file);
-      _imageUrl = await uploadTask.ref.getDownloadURL();
-      setState(() {});
+    try {
+      final picker = ImagePicker();
+      final pickedFiles = await picker.pickMultiImage(); // Chọn nhiều ảnh
+      if (pickedFiles != null) {
+        for (var pickedFile in pickedFiles) {
+          final file = File(pickedFile.path);
+          final storageRef =
+              FirebaseStorage.instance.ref().child('places/${_uuid.v4()}.jpg');
+          final uploadTask = await storageRef.putFile(file);
+          final downloadUrl = await uploadTask.ref.getDownloadURL();
+          setState(() {
+            _imageUrls.add(downloadUrl); // Thêm URL vào danh sách
+          });
+        }
+      }
+    } catch (e) {
+      print('Error picking image: $e');
     }
   }
 
   void _savePlace() async {
     if (_formKey.currentState!.validate()) {
-      // if (_imageUrl == null) {
-      //   ScaffoldMessenger.of(context).showSnackBar(
-      //     const SnackBar(content: Text('Vui lòng chọn ảnh')),
-      //   );
-      //   return;
-      // }
+      if (_imageUrls.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Vui lòng chọn ít nhất một ảnh')),
+        );
+        return;
+      }
 
       final data = {
         'id': widget.placeId ?? _uuid.v4(),
@@ -95,20 +107,23 @@ class _AddEditPlaceScreenState extends State<AddEditPlaceScreen> {
         'floor': _floorController.text,
         'room': _roomController.text,
         'row': _rowController.text,
-        'picture': _imageUrl,
+        'pictures': _imageUrls.join(','), // Chuyển danh sách thành chuỗi
         'location': _selectedPlaceType,
       };
 
-      if (widget.placeId == null) {
-        await FirebaseFirestore.instance.collection('places_data').add(data);
-      } else {
-        await FirebaseFirestore.instance
-            .collection('places_data')
-            .doc(widget.placeId)
-            .update(data);
+      try {
+        if (widget.placeId == null) {
+          await FirebaseFirestore.instance.collection('places_data').add(data);
+        } else {
+          await FirebaseFirestore.instance
+              .collection('places_data')
+              .doc(widget.placeId)
+              .update(data);
+        }
+        Navigator.of(context).pop();
+      } catch (e) {
+        print('Error saving place: $e');
       }
-
-      Navigator.of(context).pop();
     }
   }
 
@@ -132,6 +147,7 @@ class _AddEditPlaceScreenState extends State<AddEditPlaceScreen> {
             key: _formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const Text(
                   'Khu vực',
@@ -188,41 +204,16 @@ class _AddEditPlaceScreenState extends State<AddEditPlaceScreen> {
                 ),
                 const SizedBox(height: 20),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(_imageUrl != null ? 'Ảnh đã chọn' : 'Chưa chọn ảnh',
-                        style: TextStyle(fontSize: 18)),
-                    Visibility(
-                      visible: _imageUrl != null,
-                      child: Container(
-                        height: 300,
-                        width: 300,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(30),
-                          boxShadow: const [
-                            BoxShadow(
-                                color: Colors.grey,
-                                offset: Offset(3, 3),
-                                blurRadius: 5),
-                          ],
-                        ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(30),
-                          child: Image.network(
-                            _imageUrl ?? '',
-                            errorBuilder: (BuildContext context,
-                                Object exception, StackTrace? stackTrace) {
-                              return Image.asset(
-                                'assets/building.png',
-                                fit: BoxFit.fitHeight,
-                              );
-                            },
-                          ),
-                        ),
-                      ),
+                    Text(
+                      _imageUrls.isNotEmpty
+                          ? 'Danh sách ảnh đã chọn'
+                          : 'Chưa chọn ảnh',
+                      style: const TextStyle(fontSize: 18),
                     ),
+                    const Spacer(),
                     ElevatedButton(
                       onPressed: _pickImage,
                       child: const Text('Chọn ảnh',
@@ -230,6 +221,48 @@ class _AddEditPlaceScreenState extends State<AddEditPlaceScreen> {
                     ),
                   ],
                 ),
+                const SizedBox(height: 10),
+                if (_imageUrls.isNotEmpty)
+                  SizedBox(
+                    height: 200,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: _imageUrls.length,
+                      itemBuilder: (context, index) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                          child: Container(
+                            width: 200,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(10),
+                              boxShadow: const [
+                                BoxShadow(
+                                  color: Colors.grey,
+                                  offset: Offset(3, 3),
+                                  blurRadius: 5,
+                                ),
+                              ],
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(10),
+                              child: Image.network(
+                                _imageUrls[index],
+                                fit: BoxFit.cover,
+                                errorBuilder: (BuildContext context,
+                                    Object exception, StackTrace? stackTrace) {
+                                  return Image.asset(
+                                    'assets/building.png',
+                                    fit: BoxFit.cover,
+                                  );
+                                },
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
                 const SizedBox(height: 20),
                 Center(
                   child: ElevatedButton(
@@ -242,11 +275,12 @@ class _AddEditPlaceScreenState extends State<AddEditPlaceScreen> {
                     ),
                     onPressed: _savePlace,
                     child: SizedBox(
-                        width: 200,
-                        height: 60,
-                        child: Center(
-                            child: const Text('Xác nhận',
-                                style: TextStyle(fontSize: 20)))),
+                      width: 200,
+                      height: 60,
+                      child: const Center(
+                        child: Text('Xác nhận', style: TextStyle(fontSize: 20)),
+                      ),
+                    ),
                   ),
                 ),
               ],

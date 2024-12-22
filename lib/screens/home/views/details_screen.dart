@@ -20,11 +20,19 @@ class DetailsScreen extends StatefulWidget {
 
 class _DetailsScreenState extends State<DetailsScreen> {
   late final SignInBloc manager;
+  final PageController _pageController = PageController();
+  int _currentPage = 0;
 
   @override
   void initState() {
     manager = context.read<SignInBloc>();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
   }
 
   @override
@@ -48,29 +56,72 @@ class _DetailsScreenState extends State<DetailsScreen> {
   }
 
   Widget _buildPizzaImage(BuildContext context) {
-    return Container(
-      width: MediaQuery.of(context).size.height * 0.6,
-      height: MediaQuery.of(context).size.height * 0.6,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(30),
-        boxShadow: const [
-          BoxShadow(color: Colors.grey, offset: Offset(3, 3), blurRadius: 5),
-        ],
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(30),
-        child: Image.network(
-          widget.pizza.picture ?? '',
-          errorBuilder:
-              (BuildContext context, Object exception, StackTrace? stackTrace) {
-            return Image.asset(
-              'assets/building.png',
-              fit: BoxFit.fitHeight,
-            );
-          },
+    final List<String> pictures = widget.pizza.pictures ?? []; // Danh sách ảnh
+
+    if (pictures.isEmpty) {
+      // Nếu không có ảnh nào
+      return Container(
+        width: MediaQuery.of(context).size.height * 0.6,
+        height: MediaQuery.of(context).size.height * 0.6,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(30),
+          boxShadow: const [
+            BoxShadow(color: Colors.grey, offset: Offset(3, 3), blurRadius: 5),
+          ],
         ),
-      ),
+        child: Image.asset(
+          'assets/building.png', // Hiển thị ảnh mặc định
+          fit: BoxFit.cover,
+        ),
+      );
+    }
+
+    return Column(
+      children: [
+        Container(
+          width: MediaQuery.of(context).size.height * 0.6,
+          height: MediaQuery.of(context).size.height * 0.6,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(30),
+            boxShadow: const [
+              BoxShadow(
+                  color: Colors.grey, offset: Offset(3, 3), blurRadius: 5),
+            ],
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(30),
+            child: PageView.builder(
+              controller: _pageController,
+              itemCount: pictures.length,
+              onPageChanged: (index) {
+                setState(() {
+                  _currentPage = index;
+                });
+              },
+              itemBuilder: (context, index) {
+                return Image.network(
+                  pictures[index],
+                  fit: BoxFit.cover,
+                  errorBuilder: (BuildContext context, Object exception,
+                      StackTrace? stackTrace) {
+                    return Image.asset(
+                      'assets/building.png', // Hiển thị ảnh mặc định nếu lỗi
+                      fit: BoxFit.cover,
+                    );
+                  },
+                );
+              },
+            ),
+          ),
+        ),
+        const SizedBox(height: 10),
+        Text(
+          '${_currentPage + 1} / ${pictures.length}', // Hiển thị số ảnh hiện tại
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        ),
+      ],
     );
   }
 
@@ -100,7 +151,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
                   context,
                   MaterialPageRoute(
                       builder: (_) => PrintWidget(
-                            imageUrl: widget.pizza.picture ?? '',
+                            imageUrl: widget.pizza.pictures![0],
                             textToPrint: removeDiacritics(
                               '''${widget.pizza.name}\n Dãy nhà ${widget.pizza.row} - Tầng ${widget.pizza.floor} - Phòng ${widget.pizza.room}''',
                             ),
@@ -207,57 +258,68 @@ class _DetailsScreenState extends State<DetailsScreen> {
     showDialog(
       context: context,
       useRootNavigator: true,
-      builder: (context) => SizedBox(
-        height: MediaQuery.of(context).size.height,
-        width: MediaQuery.of(context).size.height,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: MediaQuery.of(context).size.height * 0.8,
-              height: MediaQuery.of(context).size.height * 0.8,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(30),
-                boxShadow: const [
-                  BoxShadow(
-                      color: Colors.grey, offset: Offset(3, 3), blurRadius: 5),
-                ],
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(30),
-                child: Image.network(
-                  widget.pizza.picture ?? '',
-                  errorBuilder: (BuildContext context, Object exception,
-                      StackTrace? stackTrace) {
-                    return Image.asset(
-                      'assets/building.png',
-                      fit: BoxFit.fitHeight,
+      builder: (context) => Dialog(
+        insetPadding: const EdgeInsets.all(10),
+        child: SizedBox(
+          height: MediaQuery.of(context).size.height * 0.9,
+          width: MediaQuery.of(context).size.width * 0.9,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Expanded(
+                child: PageView.builder(
+                  itemCount: widget.pizza.pictures?.length ?? 0,
+                  itemBuilder: (context, index) {
+                    final imageUrl = widget.pizza.pictures?[index];
+                    return Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(30),
+                          boxShadow: const [
+                            BoxShadow(
+                              color: Colors.grey,
+                              offset: Offset(3, 3),
+                              blurRadius: 5,
+                            ),
+                          ],
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(30),
+                          child: Image.network(
+                            imageUrl ?? '',
+                            fit: BoxFit.cover,
+                            errorBuilder: (BuildContext context,
+                                Object exception, StackTrace? stackTrace) {
+                              return Image.asset(
+                                'assets/building.png',
+                                fit: BoxFit.cover,
+                              );
+                            },
+                          ),
+                        ),
+                      ),
                     );
                   },
                 ),
               ),
-            ),
-            const SizedBox(height: 10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                _buildPopupButton(
-                    context, "Đóng", const Color.fromARGB(255, 55, 190, 252),
+              const SizedBox(height: 10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  _buildPopupButton(
+                    context,
+                    "Đóng",
+                    const Color.fromARGB(255, 55, 190, 252),
                     () {
-                  Navigator.pop(context);
-                }),
-                // _buildPopupButton(context, "Kết thúc", Colors.red, () {
-                //   Navigator.pushAndRemoveUntil(
-                //     context,
-                //     MaterialPageRoute(
-                //         builder: (context) => const WelcomeScreen()),
-                //     (route) => false, // This will remove all previous routes
-                //   );
-                // }),
-              ],
-            ),
-          ],
+                      Navigator.pop(context);
+                    },
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

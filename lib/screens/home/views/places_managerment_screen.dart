@@ -63,11 +63,20 @@ class _PlacesManagementScreenState extends State<PlacesManagementScreen> {
                       return const Text('Không có loại địa điểm.');
                     }
 
-                    return DropdownButton<String>(
-                      value: _filterType,
-                      items: placeTypes
+                    // Tạo danh sách các DropdownMenuItem
+                    final dropdownItems = [
+                      const DropdownMenuItem<String>(
+                        value: null, // Giá trị null cho "Tất cả địa điểm"
+                        child: Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Text(
+                            'Tất cả địa điểm',
+                            style: TextStyle(fontSize: 18),
+                          ),
+                        ),
+                      ),
+                      ...placeTypes
                           .map((type) {
-                            // Kiểm tra xem trường "name" có tồn tại trong tài liệu hay không
                             final data = type.data() as Map<String, dynamic>;
                             if (data.containsKey('name')) {
                               final String typeName = type['name'];
@@ -85,7 +94,13 @@ class _PlacesManagementScreenState extends State<PlacesManagementScreen> {
                             return null; // Bỏ qua nếu không có trường "name"
                           })
                           .whereType<DropdownMenuItem<String>>()
-                          .toList(), // Lọc các phần tử null
+                          .toList(),
+                    ];
+
+                    return DropdownButton<String>(
+                      value:
+                          _filterType, // Nếu _filterType là null, hiển thị "Tất cả địa điểm"
+                      items: dropdownItems,
                       onChanged: (value) {
                         setState(() {
                           _filterType = value;
@@ -94,9 +109,12 @@ class _PlacesManagementScreenState extends State<PlacesManagementScreen> {
                     );
                   },
                 ),
+
                 Column(
                   children: [
                     ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          primary: const Color.fromARGB(255, 55, 190, 252)),
                       onPressed: () {
                         // Navigate to manage place types
                         Navigator.push(
@@ -109,11 +127,14 @@ class _PlacesManagementScreenState extends State<PlacesManagementScreen> {
                       child: SizedBox(
                         width: 120,
                         child: const Text('Quản lý Khu vực',
-                            style: TextStyle(fontSize: 18)),
+                            style:
+                                TextStyle(fontSize: 16, color: Colors.white)),
                       ),
                     ),
                     const SizedBox(height: 8.0),
                     ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          primary: const Color.fromARGB(255, 55, 190, 252)),
                       onPressed: () {
                         Navigator.push(
                           context,
@@ -133,8 +154,10 @@ class _PlacesManagementScreenState extends State<PlacesManagementScreen> {
                       },
                       child: SizedBox(
                         width: 120,
-                        child: const Text('Thêm địa điểm',
-                            style: TextStyle(fontSize: 18)),
+                        child: const Text(
+                          'Thêm địa điểm',
+                          style: TextStyle(fontSize: 16, color: Colors.white),
+                        ),
                       ),
                     ),
                   ],
@@ -147,6 +170,7 @@ class _PlacesManagementScreenState extends State<PlacesManagementScreen> {
                 stream: FirebaseFirestore.instance
                     .collection('places_data')
                     .where('location', isEqualTo: _filterType)
+                    .orderBy('name')
                     .snapshots(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
@@ -190,7 +214,7 @@ class _PlacesManagementScreenState extends State<PlacesManagementScreen> {
               child: Text(
                 place['name'] ?? '',
                 style:
-                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
               ),
             ),
           ),
@@ -220,7 +244,7 @@ class _PlacesManagementScreenState extends State<PlacesManagementScreen> {
             },
             child: const Text(
               'Sửa',
-              style: TextStyle(color: Colors.white, fontSize: 20),
+              style: TextStyle(color: Colors.white, fontSize: 16),
             ),
           ),
           const SizedBox(width: 8.0),
@@ -232,7 +256,7 @@ class _PlacesManagementScreenState extends State<PlacesManagementScreen> {
             },
             child: const Text(
               'Xoá',
-              style: TextStyle(color: Colors.white, fontSize: 20),
+              style: TextStyle(color: Colors.white, fontSize: 16),
             ),
           ),
         ],

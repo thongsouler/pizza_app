@@ -3,18 +3,18 @@ import 'package:pizza_repository/src/entities/macros_entity.dart';
 import '../models/models.dart';
 
 class PizzaEntity {
-  String? id;
-  String? picture;
-  String? name;
-  String? location;
-  String? floor;
-  String? room;
-  String? row; //Dãy nhà
-  String? unit;
+  final String? id;
+  final String? pictures; // Chuỗi các đường dẫn ảnh cách nhau bởi dấu phẩy
+  final String? name;
+  final String? location;
+  final String? floor;
+  final String? room;
+  final String? row; // Dãy nhà
+  final String? unit;
 
   PizzaEntity({
     this.id,
-    this.picture,
+    this.pictures,
     this.name,
     this.location,
     this.floor,
@@ -26,7 +26,7 @@ class PizzaEntity {
   Map<String, Object?> toDocument() {
     return {
       'id': id,
-      'picture': picture,
+      'pictures': pictures,
       'name': name,
       'location': location,
       'floor': floor,
@@ -38,14 +38,13 @@ class PizzaEntity {
 
   static PizzaEntity fromDocument(Map<String, dynamic> doc) {
     return PizzaEntity(
-      id: doc['id'],
-      picture: doc['picture'],
-      name: doc['name'],
-      location: doc['location'],
-      floor: doc['floor'],
-      room: doc['room'],
-      row: doc['row'],
-      unit: doc['unit']
-    );
+        id: doc['id'],
+        pictures: doc['pictures'],
+        name: doc['name'],
+        location: doc['location'],
+        floor: doc['floor'],
+        room: doc['room'],
+        row: doc['row'],
+        unit: doc['unit']);
   }
 }

@@ -3,17 +3,17 @@ import 'models.dart';
 
 class Pizza {
   String? id;
-  String? picture;
+  List<String>? pictures; // Danh sách đường dẫn ảnh
   String? name;
   String? location;
   String? floor;
   String? room;
-  String? row; //Dãy nhà
+  String? row; // Dãy nhà
   String? unit;
 
   Pizza({
     this.id,
-    this.picture,
+    this.pictures,
     this.name,
     this.location,
     this.floor,
@@ -25,7 +25,7 @@ class Pizza {
   PizzaEntity toEntity() {
     return PizzaEntity(
       id: id,
-      picture: picture,
+      pictures: pictures?.join(','), // Chuyển danh sách ảnh thành chuỗi
       name: name,
       location: location,
       floor: floor,
@@ -38,7 +38,7 @@ class Pizza {
   static Pizza fromEntity(PizzaEntity entity) {
     return Pizza(
       id: entity.id,
-      picture: entity.picture,
+      pictures: entity.pictures?.split(','), // Tách chuỗi thành danh sách
       name: entity.name,
       location: entity.location,
       floor: entity.floor,
@@ -48,3 +48,4 @@ class Pizza {
     );
   }
 }
+
