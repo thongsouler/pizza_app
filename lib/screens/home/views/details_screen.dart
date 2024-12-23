@@ -151,7 +151,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
                   context,
                   MaterialPageRoute(
                       builder: (_) => PrintWidget(
-                            imageUrl: widget.pizza.pictures![0],
+                            imageUrls: widget.pizza.pictures ?? [],
                             textToPrint: removeDiacritics(
                               '''${widget.pizza.name}\n Dãy nhà ${widget.pizza.row} - Tầng ${widget.pizza.floor} - Phòng ${widget.pizza.room}''',
                             ),

@@ -5,15 +5,12 @@ import 'package:bluetooth_print/bluetooth_print.dart';
 import 'package:bluetooth_print/bluetooth_print_model.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:image/image.dart' as img;
-import 'package:pizza_app/globals.dart' as globals;
 
 class PrintWidget extends StatefulWidget {
-  final String imageUrl;
+  final List<String> imageUrls;
   final String textToPrint;
 
-  // Add imageUrl as a required parameter
-  PrintWidget({required this.imageUrl, this.textToPrint = ''});
+  PrintWidget({required this.imageUrls, this.textToPrint = ''});
 
   @override
   _PrintWidgetState createState() => _PrintWidgetState();
@@ -21,14 +18,12 @@ class PrintWidget extends StatefulWidget {
 
 class _PrintWidgetState extends State<PrintWidget> {
   BluetoothPrint bluetoothPrint = BluetoothPrint.instance;
-
   bool _connected = false;
   BluetoothDevice? _device;
 
   @override
   void initState() {
     super.initState();
-
     WidgetsBinding.instance.addPostFrameCallback((_) => initBluetooth());
   }
 
@@ -66,9 +61,9 @@ class _PrintWidgetState extends State<PrintWidget> {
     }
   }
 
-  Future<String> getImageFromUrl() async {
+  Future<String> getImageFromUrl(String url) async {
     try {
-      final response = await http.get(Uri.parse(widget.imageUrl));
+      final response = await http.get(Uri.parse(url));
       if (response.statusCode == 200) {
         Uint8List imageBytes = response.bodyBytes;
         return base64Encode(imageBytes);
@@ -178,35 +173,33 @@ class _PrintWidgetState extends State<PrintWidget> {
                       ),
                       onPressed: _connected
                           ? () async {
-                              String base64Image = await getImageFromUrl();
+                              List<LineText> list = [
+                                LineText(
+                                  type: LineText.TYPE_TEXT,
+                                  content: widget.textToPrint,
+                                  weight: 2,
+                                  align: LineText.ALIGN_CENTER,
+                                  linefeed: 1,
+                                ),
+                              ];
 
-                              if (base64Image.isNotEmpty) {
-                                Map<String, dynamic> config = {};
-
-                                List<LineText> list = [
-                                  LineText(
-                                    type: LineText.TYPE_TEXT,
-                                    content: widget.textToPrint,
-                                    weight: 2,
-                                    align: LineText.ALIGN_CENTER,
-                                    linefeed: 1,
-                                  ),
-                                  LineText(linefeed: 1),
-                                  LineText(
+                              for (String url in widget.imageUrls) {
+                                String base64Image = await getImageFromUrl(url);
+                                if (base64Image.isNotEmpty) {
+                                  list.add(LineText(
                                     type: LineText.TYPE_IMAGE,
                                     content: base64Image,
                                     align: LineText.ALIGN_CENTER,
                                     linefeed: 1,
                                     width: 350,
                                     height: 350,
-                                  ),
-                                ];
-
-                                await bluetoothPrint.printReceipt(config, list);
-                                Navigator.of(context).pop(true);
-                              } else {
-                                setState(() {});
+                                  ));
+                                }
                               }
+
+                              Map<String, dynamic> config = {};
+                              await bluetoothPrint.printReceipt(config, list);
+                              Navigator.of(context).pop(true);
                             }
                           : null,
                     ),
